@@ -1,0 +1,4 @@
+= RHOSO installation process overview
+
+image::rhoso-infographics.png[]
+FIXME: TBD curate above graphical representation of RHOSO deployment

@@ -1,0 +1,161 @@
+= Setting up Node Network Configuration Policy 
+
+. Create required projects for the Openstack Operator installation.
++
+The next installation step for the *OpenStack Operators* involves creating the *openstack-operators* and *openstack* projects for the RHOSO operators.
++
+[source,bash]
+----
+oc new-project openstack-operators
+oc new-project openstack
+----
+
+. get list of nodes in your ocp cluster.
++
+Worker nodes:
++
+[source,bash]
+----
+oc get nodes -l node-role.kubernetes.io/worker -o jsonpath="{.items[*].metadata.name}"
+----
++
+.Sample output
+----
+ocp4-worker1.aio.example.com ocp4-worker2.aio.example.com ocp4-worker3.aio.example.com
+----
++
+Master nodes:
++
+[source,bash]
+----
+oc get nodes -l node-role.kubernetes.io/master -o jsonpath="{.items[*].metadata.name}"
+----
++
+.Sample output
+----
+ocp4-master1.aio.example.com ocp4-master2.aio.example.com ocp4-master3.aio.example.com
+----
+
+. Copy sample nncp configuration from step #4 in the documentation link provided on the section page.
++
+*or*
++
+use the provided sample configuration file `single-nic-vlan-nncp.sample`.
+
+. Create a copy of sample config for one of your nodes.
++
+[source,bash]
+----
+cp single-nic-vlan-nncp.sample osp-ng-nncp-master1.yaml
+----
+
+. Edit the file for use with the relevant node. 
++
+Refer to the network configuration table you have created earlier.
++
+[source,bash]
+----
+vi osp-ng-nncp-master1.yaml
+----
+
+. Customize the copy of sample configuration as per requirement.
+.. Change the metadata name to reflect the node name and interface name strings.
+.. Change the name of the interface as per the network configuration table.
+.. Change the vlan id as per your setup.
+.. Change the ipaddress of the interface as per the network configuration table.
+.. Repeat above steps for three network configuration blocks: internalapi, storage and tenant.
+.. Change the hostname under nodeselector to match your hostname.
+.. Change the node-role string if required.
+
+. Apply the configuration
++
+[source,bash]
+----
+oc apply -f  osp-ng-nncp-master1.yaml
+----
+
+. Create copy of your current edited file for other nodes, it will be easier to edit.
++
+[source,bash]
+----
+cp osp-ng-nncp-master1.yaml osp-ng-nncp-master2.yaml 
+cp osp-ng-nncp-master1.yaml osp-ng-nncp-master3.yaml 
+cp osp-ng-nncp-master1.yaml osp-ng-nncp-worker1.yaml
+cp osp-ng-nncp-master1.yaml osp-ng-nncp-worker2.yaml
+cp osp-ng-nncp-master1.yaml osp-ng-nncp-worker3.yaml
+----
+
+. Edit the other files with relevant network configuration as per network configuration table.
+. Most likely you will need to change only the metadata name, the ip addresses, nodeselector hostname and node-role configuration.
+
+. Apply newly onfigured yamls indivdually:
++
+[source,bash,role=execute]
+----
+oc apply -f osp-ng-nncp-master2.yaml
+oc apply -f osp-ng-nncp-master3.yaml
+oc apply -f osp-ng-nncp-worker1.yaml
+oc apply -f osp-ng-nncp-worker2.yaml
+oc apply -f osp-ng-nncp-worker3.yaml
+----
+
+. Wait until they are in an available state before proceeding:
++
+[source,bash,role=execute]
+----
+oc get nncp -w
+----
++
+.Sample Output
+[source,bash]
+----
+NAME                              STATUS      REASON
+osp-enp1s0-master1-ocp4-master1   Available   SuccessfullyConfigured
+osp-enp1s0-master2-ocp4-master2   Available   SuccessfullyConfigured
+osp-enp1s0-master3-ocp4-master3   Available   SuccessfullyConfigured
+osp-enp1s0-worker-ocp4-worker1    Available   SuccessfullyConfigured
+osp-enp1s0-worker-ocp4-worker2    Available   SuccessfullyConfigured
+osp-enp1s0-worker-ocp4-worker3    Available   SuccessfullyConfigured
+----
+. Verify the network settings are applied on the relevant node by listing ip settings on the node.
+
+.. Connect to node:
++
+[source,bash]
+----
+oc debug node/ocp4-master1.aio.example.com
+----
++
+.Sample output
+----
+Temporary namespace openshift-debug-cp7xd is created for debugging node...
+Starting pod/ocp4-master1aioexamplecom-debug ...
+To use host binaries, run `chroot /host`
+Pod IP: 192.168.123.101
+If you don't see a command prompt, try pressing enter.
+sh-4.4#
+----
+
+.. Check IP address listing to verify the desired settings are applied.
++
+[source,bash]
+----
+ip address show
+----
++
+.Sample output
+----
+. . . 
+66: enp1s0.20@enp1s0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UP group default qlen 1000
+    link/ether de:ad:be:ef:00:01 brd ff:ff:ff:ff:ff:ff
+    inet 172.17.0.101/24 brd 172.17.0.255 scope global noprefixroute enp1s0.20
+       valid_lft forever preferred_lft forever
+67: enp1s0.21@enp1s0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UP group default qlen 1000
+    link/ether de:ad:be:ef:00:01 brd ff:ff:ff:ff:ff:ff
+    inet 172.18.0.101/24 brd 172.18.0.255 scope global noprefixroute enp1s0.21
+       valid_lft forever preferred_lft forever
+68: enp1s0.22@enp1s0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UP group default qlen 1000
+    link/ether de:ad:be:ef:00:01 brd ff:ff:ff:ff:ff:ff
+    inet 172.19.0.101/24 brd 172.19.0.255 scope global noprefixroute enp1s0.22
+. . . 
+----

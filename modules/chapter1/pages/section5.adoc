@@ -1,0 +1,5 @@
+= Install control plane
+
+The OpenStack Operator functions as the main operator for Red Hat OpenStack 18 deployment. 
+It acts as a "meta" operator, overseeing and configuring other operators for OpenStack by monitoring and managing their CustomResources (CRs). 
+Moreover, installing this operator will automatically set up all necessary operator dependencies for installing and managing OpenStack.

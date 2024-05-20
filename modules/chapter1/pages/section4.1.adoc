@@ -1,0 +1,43 @@
+= Configuring NFS storage
+
+. Create an NFS share for cinder
++
+[source,bash,role=execute]
+----
+mkdir /nfs/cinder
+chmod 777 /nfs/cinder
+----
+
+. Configure NFS storage class
++
+[source,bash,role=execute]
+----
+mkdir /nfs/pv6
+mkdir /nfs/pv7
+mkdir /nfs/pv8
+mkdir /nfs/pv9
+mkdir /nfs/pv10
+mkdir /nfs/pv11
+chmod 777 /nfs/pv*
+----
++
+[source,bash,role=execute]
+----
+oc create -f nfs-storage.yaml
+----
+
+. Prepare the secret to place the NFS server connection used by Cinder
++
+[source,bash,role=execute]
+----
+oc create secret generic cinder-nfs-config --from-file=nfs-cinder-conf
+----
+
+. Prepare the secret to place the server connection used by Glance
++
+[source,bash,role=execute]
+----
+oc create secret generic glance-cinder-config --from-file=glance-conf
+----
++
+FIXME: Explain about above configuration and add steps to verify the things are configured as expected. 
