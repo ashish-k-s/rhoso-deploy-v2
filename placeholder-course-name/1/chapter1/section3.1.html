@@ -3,7 +3,9 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>DELETE Preparing RHOCP for RHOSP Network Isolation :: Placeholder Course Title</title>
+    <title>Preparing RHOCP for RHOSP Network Isolation :: Placeholder Course Title</title>
+    <link rel="prev" href="section2.5.html">
+    <link rel="next" href="section3.2.html">
     <meta name="generator" content="Antora 3.1.3">
     <link rel="stylesheet" href="../../../_/css/site.css">
     <script>var uiRootPath = '../../../_'</script>
@@ -73,7 +75,7 @@
   </li>
 </ul>
   </li>
-  <li class="nav-item" data-depth="1">
+  <li class="nav-item is-current-page" data-depth="1">
     <button class="nav-item-toggle"></button>
     <a class="nav-link" href="section3.1.html">Preparing RHOCP for RHOSP Network Isolation</a>
 <ul class="nav-list">
@@ -174,7 +176,7 @@
 <nav class="breadcrumbs" aria-label="breadcrumbs">
   <ul>
     <li><a href="../index.html">Placeholder Course Title</a></li>
-    <li><a href="section3.html">DELETE Preparing RHOCP for RHOSP Network Isolation</a></li>
+    <li><a href="section3.1.html">Preparing RHOCP for RHOSP Network Isolation</a></li>
   </ul>
 </nav>
 </div>
@@ -183,7 +185,7 @@
   <div class="toc-menu"></div>
 </aside>
 <article class="doc">
-<h1 class="page">DELETE Preparing RHOCP for RHOSP Network Isolation</h1>
+<h1 class="page">Preparing RHOCP for RHOSP Network Isolation</h1>
 <div class="paragraph">
 <p>Network confiuration for the nodes is facilated by the below operators.</p>
 </div>
@@ -287,17 +289,35 @@ By leveraging these custom resources, OpenShift facilitates efficient communicat
 <p><a href="https://access.redhat.com/documentation/en-us/red_hat_openstack_platform/18.0-dev-preview/html-single/deploying_red_hat_openstack_platform_18.0_development_preview_3_on_red_hat_openshift_container_platform/index#doc-wrapper">Deploying Red Hat OpenStack Platform 18.0 Development Preview 3 on Red Hat OpenShift Container Platform</a></p>
 </div>
 <div class="paragraph">
-<p>Sample configuration files captured from the product documentation are provided, named with the prefix <code>sample-<strong></code>.
-Additionally, preconfigured YAML files, starting with <code>osp-ng-</strong></code>, are included for your deployment in the lab.</p>
+<p>Sample configuration files captured from the product documentation are provided, named with the prefix <code>sample-*</code>.
+Additionally, preconfigured YAML files, starting with <code>osp-ng-\*</code>, are included for your deployment in the lab.</p>
 </div>
-<div class="paragraph">
-<p><strong>IMPORTANT:</strong> The pre-configured YAML files are included for your convenience.
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+The pre-configured YAML files are included for your convenience.
 However, we recommend creating your own YAML files using the sample configuration from the product documentation.
-You may use the provided sample configuration in the lab to avoid copy-pasting from the documentation and refer to the pre-configured files for reference as needed.</p>
+You may use the provided sample configuration in the lab to avoid copy-pasting from the documentation and refer to the pre-configured files for reference as needed.
+</td>
+</tr>
+</table>
 </div>
-<div class="paragraph">
-<p><strong>NOTE:</strong> For deployments in other environments, consider creating a table listing the necessary network isolation and their corresponding IP/subnet ranges.
-This will help streamline the process.</p>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+For deployments in other environments, consider creating a table listing the necessary network isolation and their corresponding IP/subnet ranges.
+This will help streamline the process.
+</td>
+</tr>
+</table>
 </div>
 <div class="olist arabic">
 <ol class="arabic">
@@ -327,338 +347,10 @@ For the following steps, we are referring to <a href="https://access.redhat.com/
 </tr>
 </table>
 </div>
-<div class="olist arabic">
-<ol class="arabic">
-<li>
-<p>Create required projects for the Openstack Operator installation.</p>
-<div class="paragraph">
-<p>The next installation step for the <strong>OpenStack Operators</strong> involves creating the <strong>openstack-operators</strong> and <strong>openstack</strong> projects for the RHOSO operators.</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc new-project openstack-operators
-oc new-project openstack</code></pre>
-</div>
-</div>
-</li>
-<li>
-<p>get list of nodes in your ocp cluster.</p>
-<div class="paragraph">
-<p>Worker nodes:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc get nodes -l node-role.kubernetes.io/worker -o jsonpath="{.items[*].metadata.name}"</code></pre>
-</div>
-</div>
-<div class="listingblock">
-<div class="title">Sample output</div>
-<div class="content">
-<pre>ocp4-worker1.aio.example.com ocp4-worker2.aio.example.com ocp4-worker3.aio.example.com</pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Master nodes:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc get nodes -l node-role.kubernetes.io/master -o jsonpath="{.items[*].metadata.name}"</code></pre>
-</div>
-</div>
-<div class="listingblock">
-<div class="title">Sample output</div>
-<div class="content">
-<pre>ocp4-master1.aio.example.com ocp4-master2.aio.example.com ocp4-master3.aio.example.com</pre>
-</div>
-</div>
-</li>
-<li>
-<p>copy sample nncp configuration from (refer step #4).</p>
-<div class="paragraph">
-<p>or use the provided sample configuration file <code>single-nic-vlan-nncp.sample</code>.</p>
-</div>
-</li>
-<li>
-<p>Create a copy of sample config for one of your nodes</p>
-</li>
-</ol>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre>cp nncp.sample osp-ng-nncp-master1.yaml</pre>
-</div>
-</div>
-<div class="olist arabic">
-<ol class="arabic">
-<li>
-<p>Edit the file for use with the relevant node. Refer to the network configuration table you have created earlier.</p>
-</li>
-</ol>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre>vi osp-ng-nncp-master1.yaml</pre>
-</div>
-</div>
-<div class="olist arabic">
-<ol class="arabic">
-<li>
-<p>Customize the copy of sample configuration as per requirement.</p>
-<div class="olist loweralpha">
-<ol class="loweralpha" type="a">
-<li>
-<p>Change the metadata name to reflect the node name and interface name strings.</p>
-</li>
-<li>
-<p>Change the name of the interface as per the network configuration table.</p>
-</li>
-<li>
-<p>Change the vlan id as per your setup.</p>
-</li>
-<li>
-<p>Change the ipaddress of the interface as per the network configuration table.</p>
-</li>
-<li>
-<p>Repeat above steps for three network configuration blocks: internalapi, storage and tenant.</p>
-</li>
-<li>
-<p>Change the hostname under nodeselector to match your hostname.</p>
-</li>
-<li>
-<p>Change the node-role string if required.</p>
-</li>
-</ol>
-</div>
-</li>
-<li>
-<p>Apply the configuration</p>
-</li>
-</ol>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre>oc apply -f  osp-ng-nncp-master1.yaml</pre>
-</div>
-</div>
-<div class="olist arabic">
-<ol class="arabic">
-<li>
-<p>Verify the network settings are applied on the relevant node by listing ip settings on the node.</p>
-<div class="olist loweralpha">
-<ol class="loweralpha" type="a">
-<li>
-<p>Connect to node:</p>
-</li>
-</ol>
-</div>
-</li>
-</ol>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre>oc debug node/ocp4-master1.aio.example.com</pre>
-</div>
-</div>
-<div class="olist loweralpha">
-<ol class="loweralpha" type="a">
-<li>
-<p>Check IP address listing to verify the desired settings are applied.</p>
-</li>
-</ol>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre>sh-4.4# ip address show</pre>
-</div>
-</div>
-<div class="paragraph">
-<p>+
-.Sample output</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre>. . .
-66: enp1s0.20@enp1s0: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu 1500 qdisc noqueue state UP group default qlen 1000
-    link/ether de:ad:be:ef:00:01 brd ff:ff:ff:ff:ff:ff
-    inet 172.17.0.101/24 brd 172.17.0.255 scope global noprefixroute enp1s0.20
-       valid_lft forever preferred_lft forever
-67: enp1s0.21@enp1s0: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu 1500 qdisc noqueue state UP group default qlen 1000
-    link/ether de:ad:be:ef:00:01 brd ff:ff:ff:ff:ff:ff
-    inet 172.18.0.101/24 brd 172.18.0.255 scope global noprefixroute enp1s0.21
-       valid_lft forever preferred_lft forever
-68: enp1s0.22@enp1s0: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu 1500 qdisc noqueue state UP group default qlen 1000
-    link/ether de:ad:be:ef:00:01 brd ff:ff:ff:ff:ff:ff
-    inet 172.19.0.101/24 brd 172.19.0.255 scope global noprefixroute enp1s0.22
-. . .</pre>
-</div>
-</div>
-<div class="olist arabic">
-<ol class="arabic">
-<li>
-<p>Create copy of your current edited file for other nodes, it will be easier to edit.</p>
-</li>
-</ol>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre>cp osp-ng-nncp-master1.yaml osp-ng-nncp-master2.yaml
-cp osp-ng-nncp-master1.yaml osp-ng-nncp-master3.yaml
-cp osp-ng-nncp-master1.yaml osp-ng-nncp-worker1.yaml
-cp osp-ng-nncp-master1.yaml osp-ng-nncp-worker2.yaml
-cp osp-ng-nncp-master1.yaml osp-ng-nncp-worker3.yaml</pre>
-</div>
-</div>
-<div class="olist arabic">
-<ol class="arabic">
-<li>
-<p>Edit the other files with relevant network configuration as per network configuration table.</p>
-</li>
-<li>
-<p>Most likely you will need to change only the metadata name, the ip addresses, nodeselector hostname and node-role configuration.</p>
-</li>
-</ol>
-</div>
-<div class="paragraph">
-<p>Copy sample file for the network-attachment-defination configuration from the same documentation url (step #8)</p>
-</div>
-<div class="paragraph">
-<p>Change the interface name and ipaddress as per your setup. Refer to network cofiguration table.
-Copy the ctlplane block and paste it at the bottom and change it for external network configuration with the relevant interface and ip addresses.</p>
-</div>
-<div class="paragraph">
-<p>Apply config for NAD</p>
-</div>
-<div class="paragraph">
-<p>Copy sample file for the MetalLB IP address pools configuration from the same documentation url (step #12)
-Make sure ip address ranges are as pre desired configuration form the network configuration table.
-Apply the configuration in osp-ng-metal-lb-ip-address-pools.yaml file</p>
-</div>
-<div class="paragraph">
-<p>Copy sample L2Advertisement configuration for MetalLB from the same documentation url (step #16)
-Change the configuration as per your setup. You may just need to chance the interface names as per the network configuration table.</p>
-</div>
-<div class="olist arabic">
-<ol class="arabic">
-<li>
-<p>Apply preconfigured yamls indivdually:</p>
-<div class="listingblock execute">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc apply -f osp-ng-nncp-w1.yaml
-oc apply -f osp-ng-nncp-w2.yaml
-oc apply -f osp-ng-nncp-w3.yaml
-oc apply -f osp-ng-nncp-m1.yaml
-oc apply -f osp-ng-nncp-m2.yaml
-oc apply -f osp-ng-nncp-m3.yaml</code></pre>
-</div>
-</div>
-</li>
-<li>
-<p>Wait until they are in an available state before proceeding:</p>
-<div class="listingblock execute">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc get nncp -w</code></pre>
-</div>
-</div>
-<div class="listingblock">
-<div class="title">Sample Output</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">NAME                              STATUS      REASON
-osp-enp1s0-master1-ocp4-master1   Available   SuccessfullyConfigured
-osp-enp1s0-master2-ocp4-master2   Available   SuccessfullyConfigured
-osp-enp1s0-master3-ocp4-master3   Available   SuccessfullyConfigured
-osp-enp1s0-worker-ocp4-worker1    Available   SuccessfullyConfigured
-osp-enp1s0-worker-ocp4-worker2    Available   SuccessfullyConfigured
-osp-enp1s0-worker-ocp4-worker3    Available   SuccessfullyConfigured</code></pre>
-</div>
-</div>
-</li>
-<li>
-<p>Before proceeding configure a <strong>nad</strong> resource for each isolated network to attach a service pod to the network:</p>
-<div class="listingblock execute">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc apply -f osp-ng-netattach.yaml</code></pre>
-</div>
-</div>
-</li>
-<li>
-<p>Verify the <code>network-attachment-definitions</code> created with the above command:</p>
-<div class="listingblock execute">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc get network-attachment-definitions.k8s.cni.cncf.io -n openstack</code></pre>
-</div>
-</div>
-<div class="listingblock">
-<div class="title">Sample Output</div>
-<div class="content">
-<pre>NAME          AGE
-ctlplane      5s
-external      5s
-internalapi   5s
-storage       5s
-tenant        5s</pre>
-</div>
-</div>
-</li>
-<li>
-<p>Once the nodes are available and attached (FIXME elaborate) configure the <strong>MetalLB IP address range</strong> using a preconfigured yaml file:</p>
-<div class="listingblock execute">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc apply -f osp-ng-metal-lb-ip-address-pools.yaml</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>FIXME: what is the difference in the range mentioned in NAD whereabbouts v/s metallb ipaddresspools</p>
-</div>
-</li>
-<li>
-<p>Verify the metallb ip address pools using below command:</p>
-<div class="listingblock execute">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc get ipaddresspools.metallb.io -n metallb-system</code></pre>
-</div>
-</div>
-<div class="listingblock">
-<div class="title">Sample Output</div>
-<div class="content">
-<pre>NAME          AUTO ASSIGN   AVOID BUGGY IPS   ADDRESSES
-ctlplane      true          false             ["172.22.0.80-172.22.0.90"]
-internalapi   true          false             ["172.17.0.80-172.17.0.90"]
-storage       true          false             ["172.18.0.80-172.18.0.90"]
-tenant        true          false             ["172.19.0.80-172.19.0.90"]</pre>
-</div>
-</div>
-</li>
-<li>
-<p>Lastly, configure a <strong>L2Advertisement</strong> resource which will define which node advertises a service to the local network which has been preconfigured for your lab environment:</p>
-<div class="listingblock execute">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc apply -f osp-ng-metal-lb-l2-advertisements.yaml</code></pre>
-</div>
-</div>
-</li>
-<li>
-<p>Verify the configuration:</p>
-<div class="listingblock execute">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc get l2advertisements.metallb.io -n metallb-system</code></pre>
-</div>
-</div>
-<div class="listingblock">
-<div class="title">Sample output</div>
-<div class="content">
-<pre>NAME          IPADDRESSPOOLS    IPADDRESSPOOL SELECTORS   INTERFACES
-ctlplane      ["ctlplane"]                                ["enp1s0"]
-internalapi   ["internalapi"]                             ["enp1s0.20"]
-storage       ["storage"]                                 ["enp1s0.21"]
-tenant        ["tenant"]                                  ["enp1s0.22"]</pre>
-</div>
-</div>
-</li>
-</ol>
-</div>
-<div class="paragraph">
-<p>FIXME: Any explanation about the significance of these?</p>
-</div>
+<nav class="pagination">
+  <span class="prev"><a href="section2.5.html">Install Cert-Manager Operator</a></span>
+  <span class="next"><a href="section3.2.html">Setting up Node Network Configuration Policy</a></span>
+</nav>
 </article>
   </div>
 </main>

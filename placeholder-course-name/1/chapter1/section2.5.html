@@ -3,9 +3,9 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Introduction :: Placeholder Course Title</title>
-    <link rel="prev" href="../index.html">
-    <link rel="next" href="section1.1.html">
+    <title>Install Cert-Manager Operator :: Placeholder Course Title</title>
+    <link rel="prev" href="section2.4.html">
+    <link rel="next" href="section3.1.html">
     <meta name="generator" content="Antora 3.1.3">
     <link rel="stylesheet" href="../../../_/css/site.css">
     <script>var uiRootPath = '../../../_'</script>
@@ -45,7 +45,7 @@
   </li>
   <li class="nav-item" data-depth="0">
 <ul class="nav-list">
-  <li class="nav-item is-current-page" data-depth="1">
+  <li class="nav-item" data-depth="1">
     <button class="nav-item-toggle"></button>
     <a class="nav-link" href="section1.html">Introduction</a>
 <ul class="nav-list">
@@ -70,7 +70,7 @@
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="section2.4.html">Install MetalLB Operator</a>
   </li>
-  <li class="nav-item" data-depth="2">
+  <li class="nav-item is-current-page" data-depth="2">
     <a class="nav-link" href="section2.5.html">Install Cert-Manager Operator</a>
   </li>
 </ul>
@@ -176,7 +176,8 @@
 <nav class="breadcrumbs" aria-label="breadcrumbs">
   <ul>
     <li><a href="../index.html">Placeholder Course Title</a></li>
-    <li><a href="section1.html">Introduction</a></li>
+    <li><a href="section2.1.html">Prerequisites for Installation</a></li>
+    <li><a href="section2.5.html">Install Cert-Manager Operator</a></li>
   </ul>
 </nav>
 </div>
@@ -185,21 +186,132 @@
   <div class="toc-menu"></div>
 </aside>
 <article class="doc">
-<h1 class="page">Introduction</h1>
-<div class="paragraph">
-<p>Red Hat OpenStack Platform (RHOSP) is an infrastructure-as-a-service product offered by Red Hat.
-Until version 17.1, Red Hat OpenStack deployment utilized the TripleO project ("OpenStack On OpenStack").
-However, the current Red Hat OpenStack product differs from both the community OpenStack and previous releases of Red Hat OpenStack Platform.</p>
+<h1 class="page">Install Cert-Manager Operator</h1>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Create the cert-manager-operator Operator namespace:</p>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">cat &lt;&lt; EOF | oc apply -f -
+apiVersion: v1
+kind: Namespace
+metadata:
+    name: cert-manager-operator
+    labels:
+      pod-security.kubernetes.io/enforce: privileged
+      security.openshift.io/scc.podSecurityLabelSync: "false"
+EOF</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Create the OperatorGroup:</p>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">cat &lt;&lt; EOF | oc apply -f -
+apiVersion: operators.coreos.com/v1
+kind: OperatorGroup
+metadata:
+  name: cert-manager-operator
+  namespace: cert-manager-operator
+spec:
+  targetNamespaces:
+  - cert-manager-operator
+  upgradeStrategy: Default
+EOF</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Confirm the OperatorGroup is installed in the namespace:</p>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc get operatorgroup -n cert-manager-operator</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Subscribe to the cert-manager Operator:</p>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">cat &lt;&lt; EOF | oc apply -f -
+apiVersion: operators.coreos.com/v1alpha1
+kind: Subscription
+metadata:
+  labels:
+    operators.coreos.com/openshift-cert-manager-operator.cert-manager-operator: ""
+  name: openshift-cert-manager-operator
+  namespace: cert-manager-operator
+spec:
+  channel: stable-v1.12
+  installPlanApproval: Automatic
+  name: openshift-cert-manager-operator
+  source: redhat-operators
+  sourceNamespace: openshift-marketplace
+  startingCSV: cert-manager-operator.v1.12.1
+EOF</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Confirm the cert-manager installplan is in the namespace:</p>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc get installplan -n cert-manager-operator</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Sample Output</div>
+<div class="content">
+<pre>NAME            CSV                             APPROVAL    APPROVED
+install-sw9rh   cert-manager-operator.v1.12.1   Automatic   true</pre>
+</div>
+</div>
+</li>
+<li>
+<p>Confirm the cert-manager operator is installed:</p>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc get clusterserviceversion -n cert-manager-operator -o custom-columns=Name:.metadata.name,Phase:.status.phase</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Sample Output</div>
+<div class="content">
+<pre>Name                                    Phase
+cert-manager-operator.v1.12.1           Succeeded</pre>
+</div>
+</div>
+</li>
+<li>
+<p>Verify that cert-manager pods are up and running by entering the following command:</p>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc get pods -n cert-manager</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Repeat command until all pods are showing READY 1/1</p>
+<div class="listingblock">
+<div class="title">Sample Output</div>
+<div class="content">
+<pre>NAME                                      READY   STATUS    RESTARTS   AGE
+cert-manager-68744bfbf4-pgx8h             1/1     Running   0          102s
+cert-manager-cainjector-5df47878b-zn6kk   1/1     Running   0          2m19s
+cert-manager-webhook-66c75fcddf-z66qg     1/1     Running   0          2m21s</pre>
+</div>
+</div>
+</li>
+</ol>
 </div>
 <div class="paragraph">
-<p>With RHOSP version 18, we are moving away from TripleO deployment and introducing Red Hat OpenStack Services on OpenShift (RHOSO). Now, the deployment of OpenStack is managed using a Red Hat OpenShift Container Platform (RHOCP) cluster. All control plane services are now containerized and run on the OpenShift Container Platform cluster.</p>
-</div>
-<div class="paragraph">
-<p>In this training, we will follow step-by-step instructions to deploy RHOSP 18 using a pre-existing OpenShift Container Platform cluster.</p>
+<p><strong>Reference:</strong> see <a href="https://access.redhat.com/documentation/en-us/openshift_container_platform/4.14/html/security_and_compliance/cert-manager-operator-for-red-hat-openshift">cert-manager Operator for Red Hat OpenShift</a> in the RHOCP Security and compliance guide.</p>
 </div>
 <nav class="pagination">
-  <span class="prev"><a href="../index.html">Home</a></span>
-  <span class="next"><a href="section1.1.html">Traditional TripleO deployment verses deployment with OpenShift cluster.</a></span>
+  <span class="prev"><a href="section2.4.html">Install MetalLB Operator</a></span>
+  <span class="next"><a href="section3.1.html">Preparing RHOCP for RHOSP Network Isolation</a></span>
 </nav>
 </article>
   </div>
