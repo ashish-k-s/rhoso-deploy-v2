@@ -55,6 +55,9 @@
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="section1.2.html">RHOSO installation process overview</a>
   </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="section1.3.html">RHOSO Installation Process in this Training</a>
+  </li>
 </ul>
   </li>
   <li class="nav-item" data-depth="1">
@@ -95,7 +98,7 @@
   </li>
   <li class="nav-item" data-depth="1">
     <button class="nav-item-toggle"></button>
-    <a class="nav-link" href="section4.html">Storage</a>
+    <a class="nav-link" href="section4.html">Storage FIXME</a>
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="section4.1.html">Configuring NFS storage</a>
@@ -119,7 +122,10 @@
     <a class="nav-link" href="section5.3.html">Create the OpenStack Control Plane</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="section5.4.html">Verify OpenStack control plane configuration</a>
+    <a class="nav-link" href="section5.4.html">Troubleshoot the OpenStack Control Plane</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="section5.5.html">Verify OpenStack control plane configuration</a>
   </li>
 </ul>
   </li>
@@ -128,10 +134,19 @@
     <a class="nav-link" href="section6.html">Create data plane</a>
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="section6.1.html">Create the Data Plane</a>
+    <a class="nav-link" href="section6.1.html">Create the Data Plane Network configuration</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="section6.2.html">Verify data plane deployment</a>
+    <a class="nav-link" href="section6.2.html">Create the Data Plane VM</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="section6.3.html">Data Plane Deployment</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="section6.4.html">Create the Data Plane VM</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="section6.5.html">Verify data plane deployment</a>
   </li>
 </ul>
   </li>
@@ -187,78 +202,75 @@
 </aside>
 <article class="doc">
 <h1 class="page">Create the OpenStack Control Plane</h1>
-<div class="sect1">
-<h2 id="_overview"><a class="anchor" href="#_overview"></a>Overview</h2>
-<div class="sectionbody">
 <div class="paragraph">
-<p>We will be using a preconfigured file (<strong>files/osp-ng-ctlplane-deploy.yaml</strong>) to create the control plane and at the same time enable the required services, configure the control plane network, and configure the service back ends.</p>
+<p><strong>Reference:</strong> See <a href="https://access.redhat.com/documentation/en-us/red_hat_openstack_platform/18.0-dev-preview/html-single/deploying_red_hat_openstack_platform_18.0_development_preview_3_on_red_hat_openshift_container_platform/index#proc_creating-the-control-plane_controlplane">Setion 4.2. Creating the control plane
+</a> from RHOSP18.0-DP3 deployment guide. Use the <a href="https://github.com/openstack-k8s-operators/openstack-operator/blob/dev-preview3/config/samples/core_v1beta1_openstackcontrolplane_galera_network_isolation.yaml">Sample configuration file</a> from upstream repository.</p>
 </div>
-<div class="paragraph">
-<p>FIXME: Review below. Is it necessary to add it?</p>
-</div>
-<div class="paragraph">
-<p>Sample configuration files in the form of Validated Architectures (VAs) may be provided as Feature Pack after release of RHOSP18.
-These will be made available in the form of kustomize YAML files.</p>
-</div>
-<div class="paragraph">
-<p>Kustomize is a Kubernetes-native deployment tool that enables customization of YAML files without altering the original.
-It simplifies resource configuration by allowing base templates to be customized with user data, eliminating the need to write manifests from scratch.
-This abstraction streamlines resource management, enabling users to focus solely on relevant details without requiring full knowledge of Kubernetes YAML structures.</p>
-</div>
-<div class="paragraph">
-<p>The current onfiguration is derived from the upstream templates available here:
-<a href="https://github.com/openstack-k8s-operators/openstack-operator/blob/dev-preview3/config/samples/" class="bare">https://github.com/openstack-k8s-operators/openstack-operator/blob/dev-preview3/config/samples/</a></p>
-</div>
-<div class="paragraph">
-<p>In this deployment, the bastion has a preconfigured NFS service that we will be using to store glance images and cinder volumes.</p>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+In this deployment, the bastion has a preconfigured NFS service that we will be using to store glance images and cinder volumes.
+</td>
+</tr>
+</table>
 </div>
 <div class="olist arabic">
 <ol class="arabic">
 <li>
-<p>Create an NFS share for cinder</p>
-<div class="listingblock execute">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">mkdir /nfs/cinder
-chmod 777 /nfs/cinder</code></pre>
-</div>
-</div>
-</li>
-<li>
-<p>Configure NFS storage class</p>
-<div class="listingblock execute">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">mkdir /nfs/pv6
-mkdir /nfs/pv7
-mkdir /nfs/pv8
-mkdir /nfs/pv9
-mkdir /nfs/pv10
-mkdir /nfs/pv11
-chmod 777 /nfs/pv*</code></pre>
-</div>
-</div>
-<div class="listingblock execute">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc create -f nfs-storage.yaml</code></pre>
-</div>
-</div>
-</li>
-<li>
-<p>Prepare the secret to place the NFS server connection used by Cinder</p>
-<div class="listingblock execute">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc create secret generic cinder-nfs-config --from-file=nfs-cinder-conf</code></pre>
-</div>
-</div>
-</li>
-<li>
-<p>Prepare the secret to place the server connection used by Glance</p>
-<div class="listingblock execute">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc create secret generic glance-cinder-config --from-file=glance-conf</code></pre>
-</div>
+<p>Copy sample controlplane deployment configuration from upstream repository link mentioned above.</p>
+<div class="paragraph">
+<p><strong>or</strong></p>
 </div>
 <div class="paragraph">
-<p>FIXME: Explain about above configuration and add steps to verify the things are configured as expected.</p>
+<p>Use <code>ctlplane-deploy.sample</code> file.</p>
+</div>
+</li>
+<li>
+<p>Create a copy of sample configuration file.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">cp ctlplane-deploy.sample osp-ng-ctlplane-deploy.yaml</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Edit the file with your preferred editor.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">vi osp-ng-ctlplane-deploy.yaml</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Change the configuration as per your setup.</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>Change <code>storageClass</code> from <code>local-storage</code> to <code>ocs-storagecluster-ceph-rbd</code> FIXME</p>
+</li>
+<li>
+<p>Change the <code>metallb.universe.tf/loadBalancerIPs</code> to <code>172.22.0.89</code> (this sets external ip for dnsmasq service)</p>
+</li>
+<li>
+<p>Set the server ip from 192.168.123.100 to 192.168.123.100 (this reflects in /etc/dnsmasq.d/config.cfg file of dnsmasq-dns pod)</p>
+</li>
+<li>
+<p>Configure nfs cinder volume: Refer step #2 in <a href="https://access.redhat.com/documentation/en-us/red_hat_openstack_platform/18.0-dev-preview/html-single/deploying_red_hat_openstack_platform_18.0_development_preview_3_on_red_hat_openshift_container_platform/index#proc_alternative-cinder-configure-control-plane-for-nfs_ceph-back-end">9.1.2. Configuring the control plane to use the generic NFS driver</a></p>
+</li>
+<li>
+<p>Configure customServiceConfig for glance: Refer step #2 in <a href="https://access.redhat.com/documentation/en-us/red_hat_openstack_platform/18.0-dev-preview/html-single/deploying_red_hat_openstack_platform_18.0_development_preview_3_on_red_hat_openshift_container_platform/index#assembly_alternative-storage-solutions-glance_ceph-back-end">9.2.1. Configuring the control plane Image service to use the Block Storage service</a></p>
+</li>
+<li>
+<p>As we are not using object storage for this deployment, disable swift by setting <code>enabled: false</code></p>
+</li>
+<li>
+<p>You may delete the blocks for <code>barbican</code> and <code>designate</code> if not required.</p>
+</li>
+</ol>
 </div>
 </li>
 <li>
@@ -288,65 +300,39 @@ This can take several minutes.
 </tr>
 </table>
 </div>
-</li>
-<li>
-<p>Check running jobs for openstack control plane deployment.</p>
+<div class="paragraph">
+<p>To track the progress, you may utilize the following command, which will automatically terminate upon completion of the job.</p>
+</div>
 <div class="listingblock execute">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc get jobs</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">while ! (oc get openstackcontrolplane -n openstack -o custom-columns=Name:.metadata.name,Status:.status.conditions[0].message | grep 'Setup complete'); do oc get openstackcontrolplane -n openstack; sleep 30; done</code></pre>
 </div>
 </div>
-<div class="listingblock">
-<div class="title">Sample output</div>
-<div class="content">
-<pre>NAME                 COMPLETIONS   DURATION   AGE
-glance-db-create     1/1           6s         66s
-glance-db-sync       1/1           22s        56s
-keystone-bootstrap   0/1           1s         1s
-keystone-db-create   1/1           6s         37s
-keystone-db-sync     1/1           16s        27s
-neutron-db-create    1/1           4s         38s</pre>
-</div>
-</div>
-</li>
-<li>
-<p>To track the progress or troubleshoot, you may check the logs for the job which is not completed.</p>
-<div class="listingblock">
-<div class="title">Example:</div>
-<div class="content">
-<pre>oc logs job/keystone-bootstrap</pre>
-</div>
-</div>
-</li>
-<li>
-<p>Check again for the status of openstack control plane deployment.</p>
-<div class="listingblock execute">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc get openstackcontrolplane -n openstack</code></pre>
-</div>
-</div>
-</li>
-<li>
-<p>Repeat the query until MESSAGE is Setup complete</p>
-<div class="listingblock">
-<div class="title">Sample Output</div>
-<div class="content">
-<pre>NAME                                 STATUS   MESSAGE
-openstack-galera-network-isolation   True     Setup complete</pre>
-</div>
+<div class="paragraph">
+<p>FIXME: short explanation  for disabling swift, designate, redis, barbican</p>
 </div>
 </li>
 </ol>
 </div>
-<div class="paragraph">
-<p><strong>Reference:</strong> See <a href="https://access.redhat.com/documentation/en-us/red_hat_openstack_platform/18.0-dev-preview/html-single/deploying_red_hat_openstack_platform_18.0_development_preview_3_on_red_hat_openshift_container_platform/index#proc_creating-the-control-plane_controlplane">Setion 4.2. Creating the control plane
-</a> from RHOSP18.0-DP3 deployment guide.</p>
-</div>
-</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+Sample configuration files in the form of Validated Architectures (VAs) may be provided as Feature Pack after release of RHOSP18.
+These will be made available in the form of kustomize YAML files.
+Kustomize is a Kubernetes-native deployment tool that enables customization of YAML files without altering the original.
+It simplifies resource configuration by allowing base templates to be customized with user data, eliminating the need to write manifests from scratch.
+This abstraction streamlines resource management, enabling users to focus solely on relevant details without requiring full knowledge of Kubernetes YAML structures.
+</td>
+</tr>
+</table>
 </div>
 <nav class="pagination">
   <span class="prev"><a href="section5.2.html">Install the OpenStack Operator</a></span>
-  <span class="next"><a href="section5.4.html">Verify OpenStack control plane configuration</a></span>
+  <span class="next"><a href="section5.4.html">Troubleshoot the OpenStack Control Plane</a></span>
 </nav>
 </article>
   </div>

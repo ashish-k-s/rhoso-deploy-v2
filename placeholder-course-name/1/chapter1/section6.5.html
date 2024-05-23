@@ -3,9 +3,9 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Install the OpenStack Operator :: Placeholder Course Title</title>
-    <link rel="prev" href="section5.1.html">
-    <link rel="next" href="section5.3.html">
+    <title>Verify data plane deployment :: Placeholder Course Title</title>
+    <link rel="prev" href="section6.4.html">
+    <link rel="next" href="section9.html">
     <meta name="generator" content="Antora 3.1.3">
     <link rel="stylesheet" href="../../../_/css/site.css">
     <script>var uiRootPath = '../../../_'</script>
@@ -115,7 +115,7 @@
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="section5.1.html">Configure the secrets</a>
   </li>
-  <li class="nav-item is-current-page" data-depth="2">
+  <li class="nav-item" data-depth="2">
     <a class="nav-link" href="section5.2.html">Install the OpenStack Operator</a>
   </li>
   <li class="nav-item" data-depth="2">
@@ -145,7 +145,7 @@
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="section6.4.html">Create the Data Plane VM</a>
   </li>
-  <li class="nav-item" data-depth="2">
+  <li class="nav-item is-current-page" data-depth="2">
     <a class="nav-link" href="section6.5.html">Verify data plane deployment</a>
   </li>
 </ul>
@@ -191,8 +191,8 @@
 <nav class="breadcrumbs" aria-label="breadcrumbs">
   <ul>
     <li><a href="../index.html">Placeholder Course Title</a></li>
-    <li><a href="section5.html">Install control plane</a></li>
-    <li><a href="section5.2.html">Install the OpenStack Operator</a></li>
+    <li><a href="section6.html">Create data plane</a></li>
+    <li><a href="section6.5.html">Verify data plane deployment</a></li>
   </ul>
 </nav>
 </div>
@@ -201,142 +201,238 @@
   <div class="toc-menu"></div>
 </aside>
 <article class="doc">
-<h1 class="page">Install the OpenStack Operator</h1>
-<div class="paragraph">
-<p>Follow below steps for installation of Openstack Operator on RHOCP cluster.</p>
-</div>
-<div class="paragraph">
-<p><strong>Reference:</strong> See <a href="https://access.redhat.com/documentation/en-us/red_hat_openstack_platform/18.0-dev-preview/html-single/deploying_red_hat_openstack_platform_18.0_development_preview_3_on_red_hat_openshift_container_platform/index#proc_installing-the-OpenStack-Operator_installing">Section 2.2. Installing the OpenStack Operator</a> from RHOSP18.0-DP3 deployment guide.</p>
-</div>
+<h1 class="page">Verify data plane deployment</h1>
 <div class="olist arabic">
 <ol class="arabic">
 <li>
-<p>Copy the OpenStack Operator configuration for <strong>Catalog Source, OperatorGroup and Subscription</strong> from step number 8,9,10 respectively.</p>
-<div class="paragraph">
-<p>or</p>
-</div>
-<div class="paragraph">
-<p>Use openstack-operator.sample file.</p>
-</div>
+<p>Track the deployment process by observing logs.</p>
 </li>
 <li>
-<p>Create a copy of sample config to install openstack operator.</p>
-<div class="listingblock">
+<p>You can view the Ansible logs while the deployment executes:</p>
+<div class="listingblock execute">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">cp openstack-operator.sample osp-ng-openstack-operator.yaml</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc logs -l app=openstackansibleee -f --max-log-requests 10</code></pre>
 </div>
-</div>
-</li>
-<li>
-<p>Edit the file for use with your preferred editor.</p>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">vi osp-ng-openstack-operator.yaml</code></pre>
-</div>
-</div>
-</li>
-<li>
-<p>Change the <code>image</code> string for the CatalogSource to the below url:</p>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">quay.io/redhat_emp1/osp-on-ocp-lb1374-dp3-index:latest</code></pre>
-</div>
-</div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-This custom catalog source is required until RHOSP18 is released.
-</td>
-</tr>
-</table>
-</div>
-</li>
-</ol>
-</div>
-<div class="listingblock">
-<div class="title">Sample output</div>
-<div class="content">
-<pre>  #image: &lt;your_registry&gt;[:&lt;port&gt;]/rhosp-dev-preview/openstack-operator-index:0.1.3
-  image: quay.io/redhat_emp1/osp-on-ocp-lb1374-dp3-index:latest</pre>
-</div>
-</div>
-<div class="olist arabic">
-<ol class="arabic">
-<li>
-<p>Configure the Catalog Source, OperatorGroup and Subscription for the OpenStack Operator</p>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc apply -f osp-ng-openstack-operator.yaml</code></pre>
-</div>
-</div>
-</li>
-<li>
-<p>Confirm that you have installed the Openstack Operator, <strong>openstack-operator.openstack-operators</strong>:</p>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc get operators openstack-operator.openstack-operators</code></pre>
-</div>
-</div>
-</li>
-<li>
-<p>Review the pods in the <strong>openstack-operators</strong> namespace:</p>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc get pods -n openstack-operators</code></pre>
-</div>
-</div>
-</li>
-<li>
-<p>If you run:</p>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc get pods -n openstack-operators --sort-by=.metadata.creationTimestamp</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>You should see a list of completed pods and then the running openstack services pods.
-It should look like:</p>
 </div>
 <div class="listingblock">
 <div class="title">Sample Output</div>
 <div class="content">
-<pre>NAME                                                              READY   STATUS      RESTARTS   AGE
-(...)
-openstack-operator-index-89nv9                                    1/1     Running     0          7m30s
-
-neutron-operator-controller-manager-5755996c4b-ctbf8              2/2     Running     0          7m19s
-openstack-ansibleee-operator-controller-manager-6d7d77fc45pdtfj   2/2     Running     0          7m13s
-openstack-operator-controller-manager-56fb74ccb7-r8lvn            2/2     Running     0          7m1s
-dataplane-operator-controller-manager-6844bfd645-f2zvs            2/2     Running     0          7m1s
-glance-operator-controller-manager-596b56cd5-rvfrm                2/2     Running     0          6m59s
-swift-operator-controller-manager-df5fbbbc5-zscc5                 2/2     Running     0          6m49s
-octavia-operator-controller-manager-6549bc8f-r6xbp                2/2     Running     0          6m42s
-openstack-baremetal-operator-controller-manager-7cd655c4c7f5glm   2/2     Running     0          6m42s
-barbican-operator-controller-manager-69b766c996-ldg4n             2/2     Running     0          6m28s
-(...)</pre>
+<pre>(...)
+PLAY RECAP *********************************************************************
+edpm-compute-0             : ok=53   changed=26   unreachable=0    failed=0    skipped=54   rescued=0    ignored=0</pre>
 </div>
 </div>
 <div class="paragraph">
-<p>Wait to see all the <strong>Running</strong> pods in <strong>READY</strong> state.</p>
+<p>Press Ctrl-C to exit.</p>
+</div>
+</li>
+<li>
+<p>Check the status of Openstack data plane Deployment.</p>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc get openstackdataplanedeployment</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Repeat the query until you see the following:</p>
+<div class="listingblock">
+<div class="title">Sample Output</div>
+<div class="content">
+<pre>NAME                  STATUS   MESSAGE
+openstack-edpm-ipam   True     Setup Complete</pre>
+</div>
+</div>
+</li>
+<li>
+<p>Check the status of Openstack data plane Nodeset deployment.</p>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc get openstackdataplanenodeset</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Repeat the query until you see the following:</p>
+<div class="listingblock">
+<div class="title">Sample Output</div>
+<div class="content">
+<pre>NAME                  STATUS   MESSAGE
+openstack-edpm-ipam   True     NodeSet Ready</pre>
+</div>
+</div>
+</li>
+</ol>
 </div>
 <div class="paragraph">
-<p>To track the progress, you may utilize the following command, which will automatically terminate upon completion of the job.</p>
+<p>FIXME: review below steps till end.</p>
+</div>
+<div class="paragraph">
+<p><strong>Troubleshooting data plane deployment:</strong></p>
+</div>
+<div class="paragraph">
+<p>Pre-configured YAML files suitable for the lab environment are provided with this training.
+However, you may face any issue with the deployment.
+Follow below steps to track the progress with the data plane deployment and troubleshoot it.</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Check the status of the deployment, it is in progress.</p>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc get openstackdataplanedeployments.dataplane.openstack.org
+oc get openstackdataplanenodesets.dataplane.openstack.org</code></pre>
+</div>
 </div>
 <div class="listingblock">
+<div class="title">Sample output</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">while ! (oc get pods -n openstack-operators | grep -v STATUS | grep -v Running | grep -v Completed | wc -l | grep 0); do sleep 10; done</code></pre>
+<pre>NAME                  NODESETS                  STATUS   MESSAGE
+openstack-edpm-ipam   ["openstack-edpm-ipam"]   False    Deployment in progress
+
+ . . .
+
+NAME                  STATUS   MESSAGE
+openstack-edpm-ipam   False    Deployment in progress</pre>
+</div>
+</div>
+</li>
+<li>
+<p>List running jobs</p>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc get jobs</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Sample output</div>
+<div class="content">
+<pre>NAME                                 COMPLETIONS   DURATION   AGE
+bootstrap-openstack-edpm-ipam        1/1           103s       2m27s
+cinder-db-purge-28585441             1/1           34s        11h
+&gt;&gt; download-cache-openstack-edpm-ipam   0/1           43s        43s &lt;&lt;
+glance-purge-cron-28585441           1/1           17s        11h
+keystone-cron-28585981               1/1           25s        155m
+keystone-cron-28586041               1/1           27s        95m
+keystone-cron-28586101               1/1           44s        35m</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Make note of the job in progress (not completed) in the above output.</p>
+</div>
+</li>
+<li>
+<p>Check the logs of running job to track it&#8217;s progress and investigate any failure.</p>
+<div class="listingblock">
+<div class="title">Example:</div>
+<div class="content">
+<pre>oc logs jobs/download-cache-openstack-edpm-ipam -f</pre>
+</div>
+</div>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p><strong>Troubleshooting networking on compute node:</strong></p>
+</div>
+<div class="paragraph">
+<p>Netwroking setup of the data plane deployment could be error prone while you are tweaking your YAML files.
+You may loose the connectivity of the compute node due to any misconfiguration in the files.
+You may need to tweak the data plane network configuration files for appropriate networking setup (os-net-config) on the compute node.</p>
+</div>
+<div class="paragraph">
+<p>If you are encountering errors related to any network related job, follow these steps:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Access the compute node and review <code>/etc/os-net-confg/config.yaml</code>.</p>
+</li>
+<li>
+<p>Make necessary tweaks and run <code>os-net-config</code> command manually.</p>
+</li>
+<li>
+<p>Repeate above step until you get the networking setup as desired.</p>
+</li>
+<li>
+<p>You may loose the network access to the compute node due to application of misconfigured os-net-config settings.</p>
+</li>
+<li>
+<p>You may access the node over the console if it is not reachable on the network.</p>
+</li>
+<li>
+<p>Reset the network settings of the compute node with below steps:</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>Log in to the compute node as the root user via console.</p>
+</li>
+<li>
+<p>Delete OVS bridges:</p>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">ovs-vsctl del-br br-osp
+ovs-vsctl del-br br-ex</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Delete current network configuration files:</p>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">rm -f /etc/sysconfig/network-scripts/ifcfg-*</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Reboot the compute node to restore network connectivity.</p>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>Once a working configuration is achieved, update related changes in <code>osp-ng-dataplane-node-set-deploy.yaml</code> and <code>osp-ng-dataplane-netconfig.yaml</code> as per requirement.</p>
+</li>
+<li>
+<p>Apply the settings using <code>oc apply</code> command.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p><strong>Re-run Data Plane Deployment:</strong></p>
+</div>
+<div class="paragraph">
+<p>During troubleshooting, if needed, delete the existing data plane deployment and re-run it:</p>
+</div>
+<div class="paragraph">
+<p>Deleting the data plane node set and deployment will clean up all the related jobs and associated pods and you may start from scratch.</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Delete existing deployment:</p>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc delete -f osp-ng-dataplane-deployment.yaml
+oc delete -f osp-ng-dataplane-node-set-deploy.yaml</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Re-run the deployment:</p>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc apply -f osp-ng-dataplane-node-set-deploy.yaml
+oc apply -f osp-ng-dataplane-deployment.yaml</code></pre>
 </div>
 </div>
 </li>
 </ol>
 </div>
 <nav class="pagination">
-  <span class="prev"><a href="section5.1.html">Configure the secrets</a></span>
-  <span class="next"><a href="section5.3.html">Create the OpenStack Control Plane</a></span>
+  <span class="prev"><a href="section6.4.html">Create the Data Plane VM</a></span>
+  <span class="next"><a href="section9.html">Access OpenStack</a></span>
 </nav>
 </article>
   </div>

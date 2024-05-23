@@ -55,6 +55,9 @@
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="section1.2.html">RHOSO installation process overview</a>
   </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="section1.3.html">RHOSO Installation Process in this Training</a>
+  </li>
 </ul>
   </li>
   <li class="nav-item" data-depth="1">
@@ -95,7 +98,7 @@
   </li>
   <li class="nav-item" data-depth="1">
     <button class="nav-item-toggle"></button>
-    <a class="nav-link" href="section4.html">Storage</a>
+    <a class="nav-link" href="section4.html">Storage FIXME</a>
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="section4.1.html">Configuring NFS storage</a>
@@ -119,7 +122,10 @@
     <a class="nav-link" href="section5.3.html">Create the OpenStack Control Plane</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="section5.4.html">Verify OpenStack control plane configuration</a>
+    <a class="nav-link" href="section5.4.html">Troubleshoot the OpenStack Control Plane</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="section5.5.html">Verify OpenStack control plane configuration</a>
   </li>
 </ul>
   </li>
@@ -128,10 +134,19 @@
     <a class="nav-link" href="section6.html">Create data plane</a>
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="section6.1.html">Create the Data Plane</a>
+    <a class="nav-link" href="section6.1.html">Create the Data Plane Network configuration</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="section6.2.html">Verify data plane deployment</a>
+    <a class="nav-link" href="section6.2.html">Create the Data Plane VM</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="section6.3.html">Data Plane Deployment</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="section6.4.html">Create the Data Plane VM</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="section6.5.html">Verify data plane deployment</a>
   </li>
 </ul>
   </li>
@@ -289,8 +304,8 @@ By leveraging these custom resources, OpenShift facilitates efficient communicat
 <p><a href="https://access.redhat.com/documentation/en-us/red_hat_openstack_platform/18.0-dev-preview/html-single/deploying_red_hat_openstack_platform_18.0_development_preview_3_on_red_hat_openshift_container_platform/index#doc-wrapper">Deploying Red Hat OpenStack Platform 18.0 Development Preview 3 on Red Hat OpenShift Container Platform</a></p>
 </div>
 <div class="paragraph">
-<p>Sample configuration files captured from the product documentation are provided, named with the prefix <code>sample-*</code>.
-Additionally, preconfigured YAML files, starting with <code>osp-ng-\*</code>, are included for your deployment in the lab.</p>
+<p>Sample configuration files captured from the product documentation are provided, files with extension <code>*.sample</code>.
+Additionally, preconfigured YAML files, named with the prefix <code>osp-ng-\*</code>, are made available in the git repository.</p>
 </div>
 <div class="admonitionblock important">
 <table>
@@ -322,14 +337,14 @@ This will help streamline the process.
 <div class="olist arabic">
 <ol class="arabic">
 <li>
-<p>Clone the Files Repo. FIXME: Provide steps to download the config file zip</p>
+<p>Clone the Files Repo.</p>
 <div class="paragraph">
-<p>In the bastion terminal, clone the repo and change directory to the files that we will used later in the lab</p>
+<p>In the bastion terminal, clone the repo and change directory to the files that we will use later in the lab.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">git clone https://github.com/pnavarro/showroom_osp-on-ocp-lb1374.git labrepo
-cd labrepo/content/files</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">git clone https://github.com/RedHatQuickCourses/rhoso-deploy-files.git
+cd rhoso-deploy-files</code></pre>
 </div>
 </div>
 </li>
@@ -342,7 +357,19 @@ cd labrepo/content/files</code></pre>
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-For the following steps, we are referring to <a href="https://access.redhat.com/documentation/en-us/red_hat_openstack_platform/18.0-dev-preview/html-single/deploying_red_hat_openstack_platform_18.0_development_preview_3_on_red_hat_openshift_container_platform/index#proc_preparing-RHOCP-for-RHOSP-network-isolation_preparing">Section 3.4. Preparing RHOCP for RHOSP network isolation</a> from Deploying Red Hat OpenStack Platform 18.0 Development Preview 3 on Red Hat OpenShift Container Platform guide.
+For the following steps, we are referring to <a href="https://access.redhat.com/documentation/en-us/red_hat_openstack_platform/18.0-dev-preview/html-single/deploying_red_hat_openstack_platform_18.0_development_preview_3_on_red_hat_openshift_container_platform/index#proc_preparing-RHOCP-for-RHOSP-network-isolation_preparing">Section 3.4. Preparing RHOCP for RHOSP network isolation</a> from <em>Deploying Red Hat OpenStack Platform 18.0 Development Preview 3 on Red Hat OpenShift Container Platform guide</em>.
+</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+Sample files are made available for your convenience so as to avoid copy-paste of sample configuration from the product documentation. If required, you may open the above link in another tab for handy reference.
 </td>
 </tr>
 </table>

@@ -55,6 +55,9 @@
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="section1.2.html">RHOSO installation process overview</a>
   </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="section1.3.html">RHOSO Installation Process in this Training</a>
+  </li>
 </ul>
   </li>
   <li class="nav-item" data-depth="1">
@@ -95,7 +98,7 @@
   </li>
   <li class="nav-item" data-depth="1">
     <button class="nav-item-toggle"></button>
-    <a class="nav-link" href="section4.html">Storage</a>
+    <a class="nav-link" href="section4.html">Storage FIXME</a>
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="section4.1.html">Configuring NFS storage</a>
@@ -119,7 +122,10 @@
     <a class="nav-link" href="section5.3.html">Create the OpenStack Control Plane</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="section5.4.html">Verify OpenStack control plane configuration</a>
+    <a class="nav-link" href="section5.4.html">Troubleshoot the OpenStack Control Plane</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="section5.5.html">Verify OpenStack control plane configuration</a>
   </li>
 </ul>
   </li>
@@ -128,10 +134,19 @@
     <a class="nav-link" href="section6.html">Create data plane</a>
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="section6.1.html">Create the Data Plane</a>
+    <a class="nav-link" href="section6.1.html">Create the Data Plane Network configuration</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="section6.2.html">Verify data plane deployment</a>
+    <a class="nav-link" href="section6.2.html">Create the Data Plane VM</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="section6.3.html">Data Plane Deployment</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="section6.4.html">Create the Data Plane VM</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="section6.5.html">Verify data plane deployment</a>
   </li>
 </ul>
   </li>
@@ -288,6 +303,14 @@ EOF</code></pre>
 <div class="content">
 <pre>Name                                    Phase
 metallb-operator.v4.13.0-202404030309   Succeeded</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Track the progress using below command:</p>
+</div>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">while ! (oc get clusterserviceversion -n metallb-system -o custom-columns=Name:.metadata.name,Phase:.status.phase | grep metallb-operator | grep Succeeded); do oc get clusterserviceversion -n metallb-system; sleep 5; done</code></pre>
 </div>
 </div>
 </li>
