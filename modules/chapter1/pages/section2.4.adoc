@@ -92,6 +92,13 @@ oc get clusterserviceversion -n metallb-system -o custom-columns=Name:.metadata.
 Name                                    Phase
 metallb-operator.v4.13.0-202404030309   Succeeded
 ----
++
+Track the progress using below command:
++
+[source,bash,role=execute]
+----
+while ! (oc get clusterserviceversion -n metallb-system -o custom-columns=Name:.metadata.name,Phase:.status.phase | grep metallb-operator | grep Succeeded); do oc get clusterserviceversion -n metallb-system; sleep 5; done
+----
 
 . Create a single instance of a metallb resource:
 +

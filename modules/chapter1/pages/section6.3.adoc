@@ -1,0 +1,61 @@
+= Data Plane Deployment
+
+. Connect to the *bastion* server with password `redhat`
++
+[source,bash,role=execute]
+----
+ssh root@192.168.123.100
+----
++
+.Sample Output
+----
+[root@ocp4-bastion ~] #
+----
+
+. Create Secret
++
+[source,bash,role=execute]
+----
+oc create secret generic dataplane-ansible-ssh-private-key-secret --save-config --dry-run=client --from-file=authorized_keys=/root/.ssh/id_rsa_compute.pub --from-file=ssh-privatekey=/root/.ssh/id_rsa_compute --from-file=ssh-publickey=/root/.ssh/id_rsa_compute.pub -n openstack -o yaml | oc apply -f-
+ssh-keygen -f ./id -t ecdsa-sha2-nistp521 -N ''
+oc create secret generic nova-migration-ssh-key --from-file=ssh-privatekey=id --from-file=ssh-publickey=id.pub -n openstack -o yaml | oc apply -f-
+----
+
+. Change to the sample configuration files' repository.
++
+[source,bash,role=execute]
+----
+cd ~/rhoso-deploy-files/sample/
+----
+
+. Copy sample dataplane deployment configuration from upstream repository link mentioned above.
++
+*or*
++
+Use `ctlplane-deploy.sample` file.
+
+. Create a copy of sample configuration file.
++
+[source,bash]
+----
+cp ctlplane-deploy.sample osp-ng-ctlplane-deploy.yaml
+----
+
+. Edit the file with your preferred editor. 
++
+[source,bash]
+----
+vi osp-ng-ctlplane-deploy.yaml
+----
+
+
+
+. Deploy the data plane
++
+[source,bash,role=execute]
+----
+oc apply -f osp-ng-dataplane-node-set-deploy.yaml
+oc apply -f osp-ng-dataplane-deployment.yaml
+----
+
+. The data plane deployment takes several minutes, go to next page for steps to track the progress of your deployment.

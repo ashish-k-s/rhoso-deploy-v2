@@ -71,8 +71,8 @@ We will create the required configuration files from scratch by referring to the
 
 https://access.redhat.com/documentation/en-us/red_hat_openstack_platform/18.0-dev-preview/html-single/deploying_red_hat_openstack_platform_18.0_development_preview_3_on_red_hat_openshift_container_platform/index#doc-wrapper[Deploying Red Hat OpenStack Platform 18.0 Development Preview 3 on Red Hat OpenShift Container Platform]
 
-Sample configuration files captured from the product documentation are provided, named with the prefix `sample-\*`. 
-Additionally, preconfigured YAML files, starting with `osp-ng-\*`, are included for your deployment in the lab.
+Sample configuration files captured from the product documentation are provided, files with extension `\*.sample`. 
+Additionally, preconfigured YAML files, named with the prefix `osp-ng-\*`, are made available in the git repository.
 
 IMPORTANT: The pre-configured YAML files are included for your convenience. 
 However, we recommend creating your own YAML files using the sample configuration from the product documentation. 
@@ -81,14 +81,16 @@ You may use the provided sample configuration in the lab to avoid copy-pasting f
 NOTE: For deployments in other environments, consider creating a table listing the necessary network isolation and their corresponding IP/subnet ranges. 
 This will help streamline the process.
 
-. Clone the Files Repo. FIXME: Provide steps to download the config file zip 
+. Clone the Files Repo.
 +
-In the bastion terminal, clone the repo and change directory to the files that we will used later in the lab
+In the bastion terminal, clone the repo and change directory to the files that we will use later in the lab.
 +
 [source,bash]
 ----
-git clone https://github.com/pnavarro/showroom_osp-on-ocp-lb1374.git labrepo
-cd labrepo/content/files
+git clone https://github.com/RedHatQuickCourses/rhoso-deploy-files.git
+cd rhoso-deploy-files
 ----
 
-NOTE: For the following steps, we are referring to https://access.redhat.com/documentation/en-us/red_hat_openstack_platform/18.0-dev-preview/html-single/deploying_red_hat_openstack_platform_18.0_development_preview_3_on_red_hat_openshift_container_platform/index#proc_preparing-RHOCP-for-RHOSP-network-isolation_preparing[Section 3.4. Preparing RHOCP for RHOSP network isolation] from Deploying Red Hat OpenStack Platform 18.0 Development Preview 3 on Red Hat OpenShift Container Platform guide.
+NOTE: For the following steps, we are referring to https://access.redhat.com/documentation/en-us/red_hat_openstack_platform/18.0-dev-preview/html-single/deploying_red_hat_openstack_platform_18.0_development_preview_3_on_red_hat_openshift_container_platform/index#proc_preparing-RHOCP-for-RHOSP-network-isolation_preparing[Section 3.4. Preparing RHOCP for RHOSP network isolation] from _Deploying Red Hat OpenStack Platform 18.0 Development Preview 3 on Red Hat OpenShift Container Platform guide_. 
+
+TIP: Sample files are made available for your convenience so as to avoid copy-paste of sample configuration from the product documentation. If required, you may open the above link in another tab for handy reference.

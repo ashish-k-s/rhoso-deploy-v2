@@ -1,16 +1,24 @@
 = Create the Data Plane VM
 
-. Make sure you are accessing *hypervisor* host as *root* user. 
-+
-.Sample Output
-----
-[root@hypervisor ~]#
-----
+. *Create VM for data plane*
 
-. Run below commands to create the *RHEL compute* on the *hypervisor* server:
+.. Log out from the bastion so that we go back to the hypervisor machine:
 +
 [source,bash,role=execute]
 ----
+logout
+----
++
+.Sample Output
+----
+[lab-user@hypervisor ~]#
+----
+
+.. Create the *RHEL compute* on lab-user (*hypervisor*) server:
++
+[source,bash,role=execute]
+----
+sudo -i
 cd /var/lib/libvirt/images
 wget http://opentraining-na100.ole.redhat.com/downloads/images/rhel9-3.qcow2
 cp rhel9-3.qcow2 rhel9-guest.qcow2
@@ -27,10 +35,8 @@ qemu-img create -f qcow2 -F qcow2 -b /var/lib/libvirt/images/rhel9-guest.qcow2 /
 virt-install --virt-type kvm --ram 16384 --vcpus 4 --cpu=host-passthrough --os-variant rhel8.4 --disk path=/var/lib/libvirt/images/osp-compute-0.qcow2,device=disk,bus=virtio,format=qcow2 --network network:ocp4-provisioning --network network:ocp4-net --boot hd,network --noautoconsole --vnc --name osp-compute0 --noreboot
 virsh start osp-compute0
 ----
-+
-NOTE: RHEL9.3 qcow2 image is made available for your convenience. Ideally you will be dowloading the image from customer portal.
 
-. Check for the IP of compute node from `192.168.123.0/24` network.
+.. Login to the Compute and Verify IP from 192.168.123.0/24
 +
 [source,bash,role=execute]
 ----
@@ -59,17 +65,18 @@ Every 2.0s: virsh domifaddr osp-compute0 --source agent                         
 virsh domifaddr osp-compute0 --source agent
 ----
 
-. Use the IP assigned to `eth1` above in the next step.
+.. Use the IP assigned to `eth1` above in the next step.
 
-. SSH to the new VM (no password required) to configure Ethernet Devices on the new Compute.
+.. Configure Ethernet Devices on New Compute
 
+.. SSH to the new VM, no password required.
 +
 [source,bash,role=execute]
 ----
 ssh root@192.168.123.61
 ----
 
-. Setup the compute server network for static IP in `172.22.0.0/24` and `192.168.123.0/24` subnets for `eth0` and `eth1` interfaces respectively.
+.. Setup the compute server network for static IP in `172.22.0/24` and `192.168.123.0/24` subnets respectively for `eth0` and `eth1` interfaces.
 +
 [source,bash,role=execute]
 ----
@@ -81,28 +88,28 @@ nmcli con add con-name "static-eth1" ifname eth1 type ethernet ip4 192.168.123.6
 nmcli con up "static-eth1"
 ----
 
-. Log off VM
+.. Log off VM
 +
 [source,bash,role=execute]
 ----
 logout
 ----
 
-. Log into the compute server via `172.22.0.0/24` network.
+.. Log into the compute server via `172.22.0/24` network.
 +
 [source,bash,role=execute]
 ----
 ssh root@172.22.0.100
 ----
 
-. Set hostname
+.. Set hostname
 +
 [source,bash,role=execute]
 ----
 sudo hostnamectl set-hostname edpm-compute-0.aio.example.com
 ----
 
-. Subscribe to the RHEL 9.3 Repos with Validated Account
+.. Subscribe to the RHEL 9.3 Repos with Validated Account
 +
 [source,bash,role=execute]
 ----
@@ -148,3 +155,41 @@ WARNING: This might error initially because of unknown hosts file.
 Retry to make sure both files are copied.
 
 NOTE: We had copied the id_rsa.pub key form hypervisor to compute VM while creating the VM in earlier steps on this page.
+
+. Connect to the *bastion* server with password `redhat`
++
+[source,bash,role=execute]
+----
+ssh root@192.168.123.100
+----
++
+.Sample Output
+----
+[root@ocp4-bastion ~] #
+----
+
+. Change to Lab Repo
++
+[source,bash,role=execute]
+----
+cd ~/labrepo/content/files
+----
+
+. Create Secret
++
+[source,bash,role=execute]
+----
+oc create secret generic dataplane-ansible-ssh-private-key-secret --save-config --dry-run=client --from-file=authorized_keys=/root/.ssh/id_rsa_compute.pub --from-file=ssh-privatekey=/root/.ssh/id_rsa_compute --from-file=ssh-publickey=/root/.ssh/id_rsa_compute.pub -n openstack -o yaml | oc apply -f-
+ssh-keygen -f ./id -t ecdsa-sha2-nistp521 -N ''
+oc create secret generic nova-migration-ssh-key --from-file=ssh-privatekey=id --from-file=ssh-publickey=id.pub -n openstack -o yaml | oc apply -f-
+----
+
+. Deploy the data plane
++
+[source,bash,role=execute]
+----
+oc apply -f osp-ng-dataplane-node-set-deploy.yaml
+oc apply -f osp-ng-dataplane-deployment.yaml
+----
+
+. The data plane deployment takes several minutes, go to next page for steps to track the progress of your deployment.

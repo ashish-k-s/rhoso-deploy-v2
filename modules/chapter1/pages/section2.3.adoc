@@ -98,6 +98,14 @@ oc get clusterserviceversion -n openshift-nmstate  -o custom-columns=Name:.metad
 Name                                              Phase
 kubernetes-nmstate-operator.4.13.0-202402211707   Succeeded
 ----
++
+Use below command to track the progress:
++
++
+[source,bash,role=execute]
+----
+while ! (oc get clusterserviceversion -n openshift-nmstate  -o custom-columns=Name:.metadata.name,Phase:.status.phase | grep kubernetes-nmstate-operator | grep Succeeded); do oc get clusterserviceversion -n openshift-nmstate; done
+----
 
 . Create instance of the nmstate operator:
 +

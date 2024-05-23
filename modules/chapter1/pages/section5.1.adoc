@@ -75,6 +75,7 @@ cGFzc3dvcmQ=
 [source,bash]
 ----
 sed -i 's/<base64_password>/cGFzc3dvcmQ=/g' osp-ng-ctlplane-secret.yaml
+sed -i 's/<base64_password_heat>/cGFzc3dvcmQ=/g' osp-ng-ctlplane-secret.yaml
 ----
 
 . Create the Secret:

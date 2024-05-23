@@ -1,64 +1,38 @@
 = Create the OpenStack Control Plane
 
-== Overview 
+*Reference:* See https://access.redhat.com/documentation/en-us/red_hat_openstack_platform/18.0-dev-preview/html-single/deploying_red_hat_openstack_platform_18.0_development_preview_3_on_red_hat_openshift_container_platform/index#proc_creating-the-control-plane_controlplane[Setion 4.2. Creating the control plane
+] from RHOSP18.0-DP3 deployment guide. Use the https://github.com/openstack-k8s-operators/openstack-operator/blob/dev-preview3/config/samples/core_v1beta1_openstackcontrolplane_galera_network_isolation.yaml[Sample configuration file] from upstream repository.
 
-We will be using a preconfigured file (*files/osp-ng-ctlplane-deploy.yaml*) to create the control plane and at the same time enable the required services, configure the control plane network, and configure the service back ends.
+NOTE: In this deployment, the bastion has a preconfigured NFS service that we will be using to store glance images and cinder volumes.
 
-FIXME: Review below. Is it necessary to add it? 
-
-Sample configuration files in the form of Validated Architectures (VAs) may be provided as Feature Pack after release of RHOSP18.
-These will be made available in the form of kustomize YAML files.
-
-Kustomize is a Kubernetes-native deployment tool that enables customization of YAML files without altering the original. 
-It simplifies resource configuration by allowing base templates to be customized with user data, eliminating the need to write manifests from scratch. 
-This abstraction streamlines resource management, enabling users to focus solely on relevant details without requiring full knowledge of Kubernetes YAML structures.
-
-The current onfiguration is derived from the upstream templates available here: 
-https://github.com/openstack-k8s-operators/openstack-operator/blob/dev-preview3/config/samples/
-
-In this deployment, the bastion has a preconfigured NFS service that we will be using to store glance images and cinder volumes.
-
-. Create an NFS share for cinder
+. Copy sample controlplane deployment configuration from upstream repository link mentioned above.
 +
-[source,bash,role=execute]
+*or*
++
+Use `ctlplane-deploy.sample` file.
+
+. Create a copy of sample configuration file.
++
+[source,bash]
 ----
-mkdir /nfs/cinder
-chmod 777 /nfs/cinder
+cp ctlplane-deploy.sample osp-ng-ctlplane-deploy.yaml
 ----
 
-. Configure NFS storage class
+. Edit the file with your preferred editor. 
 +
-[source,bash,role=execute]
+[source,bash]
 ----
-mkdir /nfs/pv6
-mkdir /nfs/pv7
-mkdir /nfs/pv8
-mkdir /nfs/pv9
-mkdir /nfs/pv10
-mkdir /nfs/pv11
-chmod 777 /nfs/pv*
-----
-+
-[source,bash,role=execute]
-----
-oc create -f nfs-storage.yaml
+vi osp-ng-ctlplane-deploy.yaml
 ----
 
-. Prepare the secret to place the NFS server connection used by Cinder
-+
-[source,bash,role=execute]
-----
-oc create secret generic cinder-nfs-config --from-file=nfs-cinder-conf
-----
-
-. Prepare the secret to place the server connection used by Glance
-+
-[source,bash,role=execute]
-----
-oc create secret generic glance-cinder-config --from-file=glance-conf
-----
-+
-FIXME: Explain about above configuration and add steps to verify the things are configured as expected. 
+. Change the configuration as per your setup.
+.. Change `storageClass` from `local-storage` to `ocs-storagecluster-ceph-rbd` FIXME
+.. Change the `metallb.universe.tf/loadBalancerIPs` to `172.22.0.89` (this sets external ip for dnsmasq service)
+.. Set the server ip from 192.168.123.100 to 192.168.123.100 (this reflects in /etc/dnsmasq.d/config.cfg file of dnsmasq-dns pod)
+.. Configure nfs cinder volume: Refer step #2 in https://access.redhat.com/documentation/en-us/red_hat_openstack_platform/18.0-dev-preview/html-single/deploying_red_hat_openstack_platform_18.0_development_preview_3_on_red_hat_openshift_container_platform/index#proc_alternative-cinder-configure-control-plane-for-nfs_ceph-back-end[9.1.2. Configuring the control plane to use the generic NFS driver]
+.. Configure customServiceConfig for glance: Refer step #2 in https://access.redhat.com/documentation/en-us/red_hat_openstack_platform/18.0-dev-preview/html-single/deploying_red_hat_openstack_platform_18.0_development_preview_3_on_red_hat_openshift_container_platform/index#assembly_alternative-storage-solutions-glance_ceph-back-end[9.2.1. Configuring the control plane Image service to use the Block Storage service]
+.. As we are not using object storage for this deployment, disable swift by setting `enabled: false` 
+.. You may delete the blocks for `barbican` and `designate` if not required.
 
 . Finally create the OpenStack control plane
 +
@@ -75,47 +49,17 @@ oc get openstackcontrolplane -n openstack
 ----
 +
 WARNING: This can take several minutes.
-
-. Check running jobs for openstack control plane deployment.
++
+To track the progress, you may utilize the following command, which will automatically terminate upon completion of the job.
 +
 [source,bash,role=execute]
 ----
-oc get jobs
+while ! (oc get openstackcontrolplane -n openstack -o custom-columns=Name:.metadata.name,Status:.status.conditions[0].message | grep 'Setup complete'); do oc get openstackcontrolplane -n openstack; sleep 30; done
 ----
-+
-.Sample output
-----
-NAME                 COMPLETIONS   DURATION   AGE
-glance-db-create     1/1           6s         66s
-glance-db-sync       1/1           22s        56s
-keystone-bootstrap   0/1           1s         1s
-keystone-db-create   1/1           6s         37s
-keystone-db-sync     1/1           16s        27s
-neutron-db-create    1/1           4s         38s
-----
+FIXME: short explanation  for disabling swift, designate, redis, barbican
 
-. To track the progress or troubleshoot, you may check the logs for the job which is not completed.
-+
-.Example:
-----
-oc logs job/keystone-bootstrap
-----
-
-. Check again for the status of openstack control plane deployment.
-+
-[source,bash,role=execute]
-----
-oc get openstackcontrolplane -n openstack
-----
-
-. Repeat the query until MESSAGE is Setup complete
-+
-.Sample Output
-----
-NAME                                 STATUS   MESSAGE
-openstack-galera-network-isolation   True     Setup complete
-----
-
-
-*Reference:* See https://access.redhat.com/documentation/en-us/red_hat_openstack_platform/18.0-dev-preview/html-single/deploying_red_hat_openstack_platform_18.0_development_preview_3_on_red_hat_openshift_container_platform/index#proc_creating-the-control-plane_controlplane[Setion 4.2. Creating the control plane
-] from RHOSP18.0-DP3 deployment guide.
+NOTE: Sample configuration files in the form of Validated Architectures (VAs) may be provided as Feature Pack after release of RHOSP18.
+These will be made available in the form of kustomize YAML files.
+Kustomize is a Kubernetes-native deployment tool that enables customization of YAML files without altering the original. 
+It simplifies resource configuration by allowing base templates to be customized with user data, eliminating the need to write manifests from scratch. 
+This abstraction streamlines resource management, enabling users to focus solely on relevant details without requiring full knowledge of Kubernetes YAML structures.

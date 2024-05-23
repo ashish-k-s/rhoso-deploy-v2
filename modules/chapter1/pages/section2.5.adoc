@@ -86,6 +86,13 @@ oc get clusterserviceversion -n cert-manager-operator -o custom-columns=Name:.me
 Name                                    Phase
 cert-manager-operator.v1.12.1           Succeeded
 ----
++
+Track the progress using below command:
++
+[source,bash,role=execute]
+----
+while ! (oc get clusterserviceversion -n cert-manager-operator -o custom-columns=Name:.metadata.name,Phase:.status.phase | grep cert-manager-operator | grep Succeeded); do oc get clusterserviceversion -n cert-manager-operator; sleep 5; done
+----
 
 . Verify that cert-manager pods are up and running by entering the following command:
 +
