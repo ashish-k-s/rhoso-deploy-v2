@@ -58,6 +58,9 @@
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="section1.3.html">RHOSO Installation Process in this Training</a>
   </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="section1.4.html">Network Configuration in this Training</a>
+  </li>
 </ul>
   </li>
   <li class="nav-item" data-depth="1">
@@ -143,7 +146,7 @@
     <a class="nav-link" href="section6.3.html">Data Plane Deployment</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="section6.4.html">Create the Data Plane VM</a>
+    <a class="nav-link" href="section6.4.html">Troubleshoot the Data Plane deployment</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="section6.5.html">Verify data plane deployment</a>
@@ -152,6 +155,9 @@
   </li>
   <li class="nav-item" data-depth="1">
     <a class="nav-link" href="section9.html">Access OpenStack</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="section10.html">Express Install</a>
   </li>
 </ul>
   </li>
@@ -218,161 +224,6 @@ NAD is used to define network attachment points and states for network devices, 
 <p><strong>MetalLB operator</strong> <em>offers load blaancing service for OCP baremetal cluster.</em>
 <code>IPAddressPool</code> and <code>L2Advertisement</code> CRs offered by MetalLB operator facilitates IP advertisement from specified pools, ensuring efficient IP allocation to services and namespaces.
 By leveraging these custom resources, OpenShift facilitates efficient communication between nodes within the cluster, promoting seamless integration and performance optimization in networking-intensive environments.</p>
-</div>
-<div class="paragraph">
-<p>FIXME: review the explanation above.</p>
-</div>
-<div class="paragraph">
-<p>Please refer to the following table for the network configuration utilized in this deployment:</p>
-</div>
-<div class="paragraph">
-<p>FIXME: review/change this table if required. also see if any google spreadsheet link can be provided for such configuration in the custom deployment.</p>
-</div>
-<table class="tableblock frame-all grid-all stretch">
-<colgroup>
-<col style="width: 14.2857%;">
-<col style="width: 14.2857%;">
-<col style="width: 14.2857%;">
-<col style="width: 14.2857%;">
-<col style="width: 14.2857%;">
-<col style="width: 14.2857%;">
-<col style="width: 14.2858%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Network name</th>
-<th class="tableblock halign-left valign-top">VLAN</th>
-<th class="tableblock halign-left valign-top">CIDR</th>
-<th class="tableblock halign-left valign-top">NetConfig allocation</th>
-<th class="tableblock halign-left valign-top">Range	MetalLB IPAddressPool range</th>
-<th class="tableblock halign-left valign-top">nad ipam range</th>
-<th class="tableblock halign-left valign-top">OCP worker nncp range</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">ctlplane</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">n/a</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">172.22.0.0/24</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">172.22.0.100 - 172.22.0.120</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">172.22.0.80-172.22.0.90</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">172.22.0.30 - 172.22.0.70</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">172.22.0.10 - 172.22.0.20</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">internalapi</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">20</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">172.17.0.0/24</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">172.17.0.100 - 172.17.0.250</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">172.17.0.80-172.17.0.90</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">172.17.0.30 - 172.17.0.70</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">172.17.0.10 - 172.17.0.20</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">storage</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">21</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">172.18.0.0/24</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">172.18.0.100 - 172.18.0.250</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">172.18.0.80-172.18.0.90</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">172.18.0.30 - 172.18.0.70</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">172.18.0.10 - 172.18.0.20</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">tenant</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">22</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">172.19.0.0/24</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">172.19.0.100 - 172.19.0.250</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">172.19.0.80-172.19.0.90</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">172.19.0.30 - 172.19.0.70</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">172.19.0.10 - 172.19.0.20</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">external</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">n/a</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">192.168.123.0/24</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">192.168.123.61 - 192.168.123.90</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">192.168.122.80 - 192.168.122.90</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">192.168.123.60 - 192.168.123.110</p></td>
-<td class="tableblock halign-left valign-top"></td>
-</tr>
-</tbody>
-</table>
-<div class="paragraph">
-<p>We will create the required configuration files from scratch by referring to the sample configuration provided in the product documentation:</p>
-</div>
-<div class="paragraph">
-<p><a href="https://access.redhat.com/documentation/en-us/red_hat_openstack_platform/18.0-dev-preview/html-single/deploying_red_hat_openstack_platform_18.0_development_preview_3_on_red_hat_openshift_container_platform/index#doc-wrapper">Deploying Red Hat OpenStack Platform 18.0 Development Preview 3 on Red Hat OpenShift Container Platform</a></p>
-</div>
-<div class="paragraph">
-<p>Sample configuration files captured from the product documentation are provided, files with extension <code>*.sample</code>.
-Additionally, preconfigured YAML files, named with the prefix <code>osp-ng-\*</code>, are made available in the git repository.</p>
-</div>
-<div class="admonitionblock important">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-important" title="Important"></i>
-</td>
-<td class="content">
-The pre-configured YAML files are included for your convenience.
-However, we recommend creating your own YAML files using the sample configuration from the product documentation.
-You may use the provided sample configuration in the lab to avoid copy-pasting from the documentation and refer to the pre-configured files for reference as needed.
-</td>
-</tr>
-</table>
-</div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-For deployments in other environments, consider creating a table listing the necessary network isolation and their corresponding IP/subnet ranges.
-This will help streamline the process.
-</td>
-</tr>
-</table>
-</div>
-<div class="olist arabic">
-<ol class="arabic">
-<li>
-<p>Clone the Files Repo.</p>
-<div class="paragraph">
-<p>In the bastion terminal, clone the repo and change directory to the files that we will use later in the lab.</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">git clone https://github.com/RedHatQuickCourses/rhoso-deploy-files.git
-cd rhoso-deploy-files</code></pre>
-</div>
-</div>
-</li>
-</ol>
-</div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-For the following steps, we are referring to <a href="https://access.redhat.com/documentation/en-us/red_hat_openstack_platform/18.0-dev-preview/html-single/deploying_red_hat_openstack_platform_18.0_development_preview_3_on_red_hat_openshift_container_platform/index#proc_preparing-RHOCP-for-RHOSP-network-isolation_preparing">Section 3.4. Preparing RHOCP for RHOSP network isolation</a> from <em>Deploying Red Hat OpenStack Platform 18.0 Development Preview 3 on Red Hat OpenShift Container Platform guide</em>.
-</td>
-</tr>
-</table>
-</div>
-<div class="admonitionblock tip">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-tip" title="Tip"></i>
-</td>
-<td class="content">
-Sample files are made available for your convenience so as to avoid copy-paste of sample configuration from the product documentation. If required, you may open the above link in another tab for handy reference.
-</td>
-</tr>
-</table>
 </div>
 <nav class="pagination">
   <span class="prev"><a href="section2.5.html">Install Cert-Manager Operator</a></span>

@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Create the Data Plane VM :: Placeholder Course Title</title>
+    <title>Troubleshoot the Data Plane deployment :: Placeholder Course Title</title>
     <link rel="prev" href="section6.3.html">
     <link rel="next" href="section6.5.html">
     <meta name="generator" content="Antora 3.1.3">
@@ -57,6 +57,9 @@
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="section1.3.html">RHOSO Installation Process in this Training</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="section1.4.html">Network Configuration in this Training</a>
   </li>
 </ul>
   </li>
@@ -143,7 +146,7 @@
     <a class="nav-link" href="section6.3.html">Data Plane Deployment</a>
   </li>
   <li class="nav-item is-current-page" data-depth="2">
-    <a class="nav-link" href="section6.4.html">Create the Data Plane VM</a>
+    <a class="nav-link" href="section6.4.html">Troubleshoot the Data Plane deployment</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="section6.5.html">Verify data plane deployment</a>
@@ -152,6 +155,9 @@
   </li>
   <li class="nav-item" data-depth="1">
     <a class="nav-link" href="section9.html">Access OpenStack</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="section10.html">Express Install</a>
   </li>
 </ul>
   </li>
@@ -192,7 +198,7 @@
   <ul>
     <li><a href="../index.html">Placeholder Course Title</a></li>
     <li><a href="section6.html">Create data plane</a></li>
-    <li><a href="section6.4.html">Create the Data Plane VM</a></li>
+    <li><a href="section6.4.html">Troubleshoot the Data Plane deployment</a></li>
   </ul>
 </nav>
 </div>
@@ -201,254 +207,165 @@
   <div class="toc-menu"></div>
 </aside>
 <article class="doc">
-<h1 class="page">Create the Data Plane VM</h1>
+<h1 class="page">Troubleshoot the Data Plane deployment</h1>
+<div class="paragraph">
+<p><strong>Troubleshooting data plane deployment:</strong></p>
+</div>
+<div class="paragraph">
+<p>Follow below steps to track the progress with the data plane deployment and troubleshoot it.</p>
+</div>
 <div class="olist arabic">
 <ol class="arabic">
 <li>
-<p><strong>Create VM for data plane</strong></p>
-<div class="olist loweralpha">
-<ol class="loweralpha" type="a">
-<li>
-<p>Log out from the bastion so that we go back to the hypervisor machine:</p>
+<p>Check the status of the deployment, it is in progress.</p>
 <div class="listingblock execute">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">logout</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc get openstackdataplanedeployments.dataplane.openstack.org
+oc get openstackdataplanenodesets.dataplane.openstack.org</code></pre>
 </div>
 </div>
 <div class="listingblock">
-<div class="title">Sample Output</div>
+<div class="title">Sample output</div>
 <div class="content">
-<pre>[lab-user@hypervisor ~]#</pre>
-</div>
-</div>
-</li>
-<li>
-<p>Create the <strong>RHEL compute</strong> on lab-user (<strong>hypervisor</strong>) server:</p>
-<div class="listingblock execute">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">sudo -i
-cd /var/lib/libvirt/images
-wget http://opentraining-na100.ole.redhat.com/downloads/images/rhel9-3.qcow2
-cp rhel9-3.qcow2 rhel9-guest.qcow2
-qemu-img info rhel9-guest.qcow2
-qemu-img resize rhel9-guest.qcow2 +90G
-chown -R qemu:qemu rhel9-*.qcow2
-virt-customize -a rhel9-guest.qcow2 --run-command 'growpart /dev/sda 4'
-virt-customize -a rhel9-guest.qcow2 --run-command 'xfs_growfs /'
-virt-customize -a rhel9-guest.qcow2 --root-password password:redhat
-virt-customize -a rhel9-guest.qcow2 --run-command 'systemctl disable cloud-init'
-virt-customize -a /var/lib/libvirt/images/rhel9-guest.qcow2 --ssh-inject root:file:/root/.ssh/id_rsa.pub
-virt-customize -a /var/lib/libvirt/images/rhel9-guest.qcow2 --selinux-relabel
-qemu-img create -f qcow2 -F qcow2 -b /var/lib/libvirt/images/rhel9-guest.qcow2 /var/lib/libvirt/images/osp-compute-0.qcow2
-virt-install --virt-type kvm --ram 16384 --vcpus 4 --cpu=host-passthrough --os-variant rhel8.4 --disk path=/var/lib/libvirt/images/osp-compute-0.qcow2,device=disk,bus=virtio,format=qcow2 --network network:ocp4-provisioning --network network:ocp4-net --boot hd,network --noautoconsole --vnc --name osp-compute0 --noreboot
-virsh start osp-compute0</code></pre>
-</div>
-</div>
-</li>
-<li>
-<p>Login to the Compute and Verify IP from 192.168.123.0/24</p>
-<div class="listingblock execute">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">watch virsh domifaddr osp-compute0 --source agent</code></pre>
-</div>
-</div>
-<div class="listingblock">
-<div class="title">Sample Output</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">Every 2.0s: virsh domifaddr osp-compute0 --source agent                                                                                                 hypervisor: Wed Apr 17 07:03:13 2024
+<pre>NAME                  NODESETS                  STATUS   MESSAGE
+openstack-edpm-ipam   ["openstack-edpm-ipam"]   False    Deployment in progress
 
- Name       MAC address          Protocol     Address
--------------------------------------------------------------------------------
- lo         00:00:00:00:00:00    ipv4         127.0.0.1/8
- -          -                    ipv6         ::1/128
- eth0       52:54:00:c0:0a:26    ipv4         172.22.0.202/24
- -          -                    ipv6         fe80::16:d083:92f4:f201/64
- eth1       52:54:00:e5:ce:09    ipv4         192.168.123.61/24
- -          -                    ipv6         fe80::bfc0:e5db:a655:729f/64</code></pre>
+ . . .
+
+NAME                  STATUS   MESSAGE
+openstack-edpm-ipam   False    Deployment in progress</pre>
+</div>
+</div>
+</li>
+<li>
+<p>List running jobs</p>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc get jobs</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Sample output</div>
+<div class="content">
+<pre>NAME                                 COMPLETIONS   DURATION   AGE
+bootstrap-openstack-edpm-ipam        1/1           103s       2m27s
+cinder-db-purge-28585441             1/1           34s        11h
+&gt;&gt; download-cache-openstack-edpm-ipam   0/1           43s        43s &lt;&lt;
+glance-purge-cron-28585441           1/1           17s        11h
+keystone-cron-28585981               1/1           25s        155m
+keystone-cron-28586041               1/1           27s        95m
+keystone-cron-28586101               1/1           44s        35m</pre>
 </div>
 </div>
 <div class="paragraph">
-<p>(Press <code>CTRL + C</code> to continue)</p>
+<p>Make note of the job in progress (not completed) in the above output.</p>
 </div>
-<div class="listingblock execute">
+</li>
+<li>
+<p>Check the logs of running job to track it&#8217;s progress and investigate any failure.</p>
+<div class="listingblock">
+<div class="title">Example:</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">virsh domifaddr osp-compute0 --source agent</code></pre>
-</div>
-</div>
-</li>
-<li>
-<p>Use the IP assigned to <code>eth1</code> above in the next step.</p>
-</li>
-<li>
-<p>Configure Ethernet Devices on New Compute</p>
-</li>
-<li>
-<p>SSH to the new VM, no password required.</p>
-<div class="listingblock execute">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">ssh root@192.168.123.61</code></pre>
-</div>
-</div>
-</li>
-<li>
-<p>Setup the compute server network for static IP in <code>172.22.0/24</code> and <code>192.168.123.0/24</code> subnets respectively for <code>eth0</code> and <code>eth1</code> interfaces.</p>
-<div class="listingblock execute">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">nmcli co delete 'Wired connection 1'
-nmcli con add con-name "static-eth0" ifname eth0 type ethernet ip4 172.22.0.100/24 ipv4.dns "172.22.0.89"
-nmcli con up "static-eth0"
-nmcli co delete 'Wired connection 2'
-nmcli con add con-name "static-eth1" ifname eth1 type ethernet ip4 192.168.123.61/24 ipv4.dns "192.168.123.100" ipv4.gateway "192.168.123.1"
-nmcli con up "static-eth1"</code></pre>
-</div>
-</div>
-</li>
-<li>
-<p>Log off VM</p>
-<div class="listingblock execute">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">logout</code></pre>
-</div>
-</div>
-</li>
-<li>
-<p>Log into the compute server via <code>172.22.0/24</code> network.</p>
-<div class="listingblock execute">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">ssh root@172.22.0.100</code></pre>
-</div>
-</div>
-</li>
-<li>
-<p>Set hostname</p>
-<div class="listingblock execute">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">sudo hostnamectl set-hostname edpm-compute-0.aio.example.com</code></pre>
-</div>
-</div>
-</li>
-<li>
-<p>Subscribe to the RHEL 9.3 Repos with Validated Account</p>
-<div class="listingblock execute">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">curl -ko /etc/pki/ca-trust/source/anchors/demosat-ha.infra.demo.redhat.com.ca.crt  "https://demosat-ha.infra.demo.redhat.com/pub/katello-server-ca.crt"
-update-ca-trust
-yum install -y "https://demosat-ha.infra.demo.redhat.com/pub/katello-ca-consumer-latest.noarch.rpm"
-subscription-manager register --org="Red_Hat_RHDP_Labs"  --activationkey="demosat-smt-b1374-1711111157" --serverurl=https://demosat-ha.infra.demo.redhat.com:8443/rhsm --baseurl=https://demosat-ha.infra.demo.redhat.com/pulp/repos
-
-sudo subscription-manager repos --disable=*
-subscription-manager repos --enable=rhceph-6-tools-for-rhel-9-x86_64-rpms --enable=rhel-9-for-x86_64-baseos-rpms --enable=rhel-9-for-x86_64-appstream-rpms --enable=rhel-9-for-x86_64-highavailability-rpms --enable=openstack-dev-preview-for-rhel-9-x86_64-rpms --enable=fast-datapath-for-rhel-9-x86_64-rpms</code></pre>
-</div>
-</div>
-</li>
-<li>
-<p>Install podman on the compute and login to registries</p>
-<div class="listingblock execute">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">sudo dnf install -y podman</code></pre>
-</div>
-</div>
-</li>
-<li>
-<p>Log off the Compute Server</p>
-<div class="listingblock execute">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">logout</code></pre>
-</div>
-</div>
-</li>
-<li>
-<p>Snapshot the Compute Server</p>
-<div class="listingblock execute">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">virsh snapshot-create-as osp-compute0 preprovisioned</code></pre>
+<pre>oc logs jobs/download-cache-openstack-edpm-ipam -f</pre>
 </div>
 </div>
 </li>
 </ol>
 </div>
-</li>
-<li>
-<p>Set SSH key for root user on the compute server.</p>
-<div class="listingblock execute">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">scp /root/.ssh/id_rsa root@192.168.123.100:/root/.ssh/id_rsa_compute
-scp /root/.ssh/id_rsa.pub root@192.168.123.100:/root/.ssh/id_rsa_compute.pub</code></pre>
+<div class="paragraph">
+<p><strong>Troubleshooting networking on compute node:</strong></p>
 </div>
+<div class="paragraph">
+<p>Netwroking setup of the data plane deployment could be error prone while you are tweaking your YAML files.
+You may loose the connectivity of the compute node due to any misconfiguration in the files.
+You may need to tweak the data plane network configuration files for appropriate networking setup (os-net-config) on the compute node.</p>
 </div>
-</li>
-</ol>
-</div>
-<div class="admonitionblock warning">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-warning" title="Warning"></i>
-</td>
-<td class="content">
-This might error initially because of unknown hosts file.
-Retry to make sure both files are copied.
-</td>
-</tr>
-</table>
-</div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-We had copied the id_rsa.pub key form hypervisor to compute VM while creating the VM in earlier steps on this page.
-</td>
-</tr>
-</table>
+<div class="paragraph">
+<p>If you are encountering errors related to any network related job, follow these steps:</p>
 </div>
 <div class="olist arabic">
 <ol class="arabic">
 <li>
-<p>Connect to the <strong>bastion</strong> server with password <code>redhat</code></p>
+<p>Access the compute node and review <code>/etc/os-net-confg/config.yaml</code>.</p>
+</li>
+<li>
+<p>Make necessary tweaks and run <code>os-net-config</code> command manually.</p>
+</li>
+<li>
+<p>Repeate above step until you get the networking setup as desired.</p>
+</li>
+<li>
+<p>You may loose the network access to the compute node due to application of misconfigured os-net-config settings.</p>
+</li>
+<li>
+<p>You may access the node over the console if it is not reachable on the network.</p>
+</li>
+<li>
+<p>Reset the network settings of the compute node with below steps:</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>Log in to the compute node as the root user via console.</p>
+</li>
+<li>
+<p>Delete OVS bridges:</p>
 <div class="listingblock execute">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">ssh root@192.168.123.100</code></pre>
-</div>
-</div>
-<div class="listingblock">
-<div class="title">Sample Output</div>
-<div class="content">
-<pre>[root@ocp4-bastion ~] #</pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">ovs-vsctl del-br br-osp
+ovs-vsctl del-br br-ex</code></pre>
 </div>
 </div>
 </li>
 <li>
-<p>Change to Lab Repo</p>
+<p>Delete current network configuration files:</p>
 <div class="listingblock execute">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">cd ~/labrepo/content/files</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">rm -f /etc/sysconfig/network-scripts/ifcfg-*</code></pre>
 </div>
 </div>
 </li>
 <li>
-<p>Create Secret</p>
+<p>Reboot the compute node to restore network connectivity.</p>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>Once a working configuration is achieved, update related changes in <code>osp-ng-dataplane-node-set-deploy.yaml</code> and <code>osp-ng-dataplane-netconfig.yaml</code> as per requirement.</p>
+</li>
+<li>
+<p>Apply the settings using <code>oc apply</code> command.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p><strong>Re-run Data Plane Deployment:</strong></p>
+</div>
+<div class="paragraph">
+<p>During troubleshooting, if needed, delete the existing data plane deployment and re-run it:</p>
+</div>
+<div class="paragraph">
+<p>Deleting the data plane node set and deployment will clean up all the related jobs and associated pods and you may start from scratch.</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Delete existing deployment:</p>
 <div class="listingblock execute">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc create secret generic dataplane-ansible-ssh-private-key-secret --save-config --dry-run=client --from-file=authorized_keys=/root/.ssh/id_rsa_compute.pub --from-file=ssh-privatekey=/root/.ssh/id_rsa_compute --from-file=ssh-publickey=/root/.ssh/id_rsa_compute.pub -n openstack -o yaml | oc apply -f-
-ssh-keygen -f ./id -t ecdsa-sha2-nistp521 -N ''
-oc create secret generic nova-migration-ssh-key --from-file=ssh-privatekey=id --from-file=ssh-publickey=id.pub -n openstack -o yaml | oc apply -f-</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc delete -f osp-ng-dataplane-deployment.yaml
+oc delete -f osp-ng-dataplane-node-set-deploy.yaml</code></pre>
 </div>
 </div>
 </li>
 <li>
-<p>Deploy the data plane</p>
+<p>Re-run the deployment:</p>
 <div class="listingblock execute">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc apply -f osp-ng-dataplane-node-set-deploy.yaml
 oc apply -f osp-ng-dataplane-deployment.yaml</code></pre>
 </div>
 </div>
-</li>
-<li>
-<p>The data plane deployment takes several minutes, go to next page for steps to track the progress of your deployment.</p>
 </li>
 </ol>
 </div>

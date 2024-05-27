@@ -58,6 +58,9 @@
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="section1.3.html">RHOSO Installation Process in this Training</a>
   </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="section1.4.html">Network Configuration in this Training</a>
+  </li>
 </ul>
   </li>
   <li class="nav-item" data-depth="1">
@@ -143,7 +146,7 @@
     <a class="nav-link" href="section6.3.html">Data Plane Deployment</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="section6.4.html">Create the Data Plane VM</a>
+    <a class="nav-link" href="section6.4.html">Troubleshoot the Data Plane deployment</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="section6.5.html">Verify data plane deployment</a>
@@ -152,6 +155,9 @@
   </li>
   <li class="nav-item" data-depth="1">
     <a class="nav-link" href="section9.html">Access OpenStack</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="section10.html">Express Install</a>
   </li>
 </ul>
   </li>
@@ -311,19 +317,12 @@ kubernetes-nmstate-operator.4.13.0-202402211707   Succeeded</pre>
 <div class="paragraph">
 <p>Use below command to track the progress:</p>
 </div>
-<div class="paragraph">
-<p>+</p>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">while ! (oc get clusterserviceversion -n openshift-nmstate  -o custom-columns=Name:.metadata.name,Phase:.status.phase | grep kubernetes-nmstate-operator | grep Succeeded); do oc get clusterserviceversion -n openshift-nmstate; sleep 2; done</code></pre>
+</div>
 </div>
 </li>
-</ol>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre>while ! (oc get clusterserviceversion -n openshift-nmstate  -o custom-columns=Name:.metadata.name,Phase:.status.phase | grep kubernetes-nmstate-operator | grep Succeeded); do oc get clusterserviceversion -n openshift-nmstate; done</pre>
-</div>
-</div>
-<div class="olist arabic">
-<ol class="arabic">
 <li>
 <p>Create instance of the nmstate operator:</p>
 <div class="listingblock execute">

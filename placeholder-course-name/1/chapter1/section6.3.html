@@ -58,6 +58,9 @@
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="section1.3.html">RHOSO Installation Process in this Training</a>
   </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="section1.4.html">Network Configuration in this Training</a>
+  </li>
 </ul>
   </li>
   <li class="nav-item" data-depth="1">
@@ -143,7 +146,7 @@
     <a class="nav-link" href="section6.3.html">Data Plane Deployment</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="section6.4.html">Create the Data Plane VM</a>
+    <a class="nav-link" href="section6.4.html">Troubleshoot the Data Plane deployment</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="section6.5.html">Verify data plane deployment</a>
@@ -152,6 +155,9 @@
   </li>
   <li class="nav-item" data-depth="1">
     <a class="nav-link" href="section9.html">Access OpenStack</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="section10.html">Express Install</a>
   </li>
 </ul>
   </li>
@@ -202,6 +208,19 @@
 </aside>
 <article class="doc">
 <h1 class="page">Data Plane Deployment</h1>
+<div class="paragraph">
+<p><strong>Reference:</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="https://access.redhat.com/documentation/en-us/red_hat_openstack_platform/18.0-dev-preview/html-single/deploying_red_hat_openstack_platform_18.0_development_preview_3_on_red_hat_openshift_container_platform/index#proc_creating-a-set-of-data-plane-nodes_dataplane">5.3. Creating a set of data plane nodes</a> from deployment guide.</p>
+</li>
+<li>
+<p><a href="https://github.com/openstack-k8s-operators/dataplane-operator/blob/238ed4f5b9f5e77c90d2785c825bde10f0b16ca0/config/samples/dataplane_v1beta1_openstackdataplanenodeset_with_ipam.yaml">Sample pre-provisioned nodes config</a> from upstream repository.</p>
+</li>
+<li>
+<p><a href="https://access.redhat.com/documentation/en-us/red_hat_openstack_platform/18.0-dev-preview/html-single/deploying_red_hat_openstack_platform_18.0_development_preview_3_on_red_hat_openshift_container_platform/index#proc_deploying-the-data-plane_dataplane">5.5. Deploying the data plane</a> from deployment guide.</p>
 <div class="olist arabic">
 <ol class="arabic">
 <li>
@@ -237,19 +256,19 @@ oc create secret generic nova-migration-ssh-key --from-file=ssh-privatekey=id --
 </div>
 </li>
 <li>
-<p>Copy sample dataplane deployment configuration from upstream repository link mentioned above.</p>
+<p>Copy sample dataplane node set configuration from upstream repository link mentioned above.</p>
 <div class="paragraph">
 <p><strong>or</strong></p>
 </div>
 <div class="paragraph">
-<p>Use <code>ctlplane-deploy.sample</code> file.</p>
+<p>Use <code>dataplane-node-set-deploy.sample</code> file.</p>
 </div>
 </li>
 <li>
 <p>Create a copy of sample configuration file.</p>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">cp ctlplane-deploy.sample osp-ng-ctlplane-deploy.yaml</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">cp dataplane-node-set-deploy.sample osp-ng-dataplane-node-set-deploy.yaml</code></pre>
 </div>
 </div>
 </li>
@@ -257,27 +276,153 @@ oc create secret generic nova-migration-ssh-key --from-file=ssh-privatekey=id --
 <p>Edit the file with your preferred editor.</p>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">vi osp-ng-ctlplane-deploy.yaml</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">vi osp-ng-dataplane-node-set-deploy.yaml</code></pre>
 </div>
 </div>
 </li>
 <li>
-<p>Deploy the data plane</p>
+<p>You may need to perform following changes in the yaml file copied from sample:
+FIXME: see what all is really mandatory.</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>Under <code>spec</code> section add environment variables for ansible output (optional)</p>
+<div class="listingblock">
+<div class="content">
+<pre>  env:
+    - name: ANSIBLE_FORCE_COLOR
+      value: "True"
+    - name: ANSIBLE_VERBOSITY
+      value: "2"</pre>
+</div>
+</div>
+</li>
+<li>
+<p>Add <code>download-cache</code> under <code>services</code> list. FIXME: required?</p>
+</li>
+<li>
+<p>Set <code>ansibleHost</code> varialbe to the ip address of compute node and <code>ansibleUser</code> variable to <code>root</code></p>
+</li>
+<li>
+<p>Under the <code>nodes</code> blok for <code>edpm-compute-0</code> node, make sure all network names are their settings are as per your network configuration table.</p>
+</li>
+<li>
+<p>Control plane network is not your default route on the compute host in this lab.</p>
+</li>
+<li>
+<p>Remove the block for <code>edpm-compute-1</code>, we are deploying single compute now.</p>
+</li>
+<li>
+<p>Under <code>nodeTemplate</code> change <code>ansibleUser</code> from cloud-admin to root.</p>
+</li>
+<li>
+<p>Set the appropriate name for your api network, change the string from <code>internal_api</code> to <code>internalapi</code>.</p>
+</li>
+<li>
+<p>Under <code>edpm_network_config_template</code> jinja2 block:</p>
+<div class="olist lowerroman">
+<ol class="lowerroman" type="i">
+<li>
+<p>Under <code>network_config</code> change <code>for network in role_networks</code> to <code>for network in role_networks if network != 'external'</code> FIXME: required?</p>
+</li>
+<li>
+<p>Add below jinja2 block FIXME: explain the need and how it is derived.</p>
+<div class="listingblock">
+<div class="content">
+<pre>          {% if 'external' in role_networks or 'external_bridge' in role_tags %}
+          - type: ovs_bridge
+            name: br-ex
+            dns_servers: {{ ctlplane_dns_nameservers }}
+            domain: {{ dns_search_domains }}
+            use_dhcp: false
+            members:
+            - type: interface
+              name: nic2
+              mtu: 1500
+              primary: true
+          {% endif %}
+          {% if 'external' in role_networks %}
+            routes:
+            - ip_netmask: 0.0.0.0/0
+              next_hop: {{ external_gateway_ip | default('192.168.123.1') }}
+            addresses:
+            - ip_netmask: {{ external_ip }}/{{ external_cidr }}
+          {% endif %}</pre>
+</div>
+</div>
+</li>
+<li>
+<p>Set the variables for compute host networking, e.g dns, vlan, mtu, etc. (FIXME: elaborate this)</p>
+</li>
+<li>
+<p>Define <code>role_networks</code> used in jinja2 block.</p>
+</li>
+<li>
+<p>Set <code>edpm_sshd_allowed_ranges</code> to ctlplane subnet.</p>
+</li>
+<li>
+<p>Set <code>edpm_container_registry_logins</code> with your credentials. FIXME: is it required if compute node is pre-registered?</p>
+</li>
+</ol>
+</div>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>Copy sample dataplane deployment configuration from the documentation link mentioned in the reference on top.</p>
+<div class="paragraph">
+<p><strong>or</strong></p>
+</div>
+<div class="paragraph">
+<p>Use <code>dataplane-deploy.sample</code> file.</p>
+</div>
+</li>
+<li>
+<p>Create a copy of sample configuration file.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">cp dataplane-deploy.sample osp-ng-dataplane-deploy.yaml</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Edit the file with your preferred editor.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">vi osp-ng-dataplane-deploy.yaml</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Make sure you appropriate <code>nodeSets</code> are listed.</p>
+</li>
+<li>
+<p>Delete the other unwatend nodeSets configuration lines.</p>
+</li>
+<li>
+<p>Deploy the data plane by applying nodesets and deployment configuration.</p>
 <div class="listingblock execute">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc apply -f osp-ng-dataplane-node-set-deploy.yaml
 oc apply -f osp-ng-dataplane-deployment.yaml</code></pre>
 </div>
 </div>
+<div class="paragraph">
+<p>The data plane deployment takes several minutes to complete.</p>
+</div>
 </li>
 <li>
-<p>The data plane deployment takes several minutes, go to next page for steps to track the progress of your deployment.</p>
+<p>Go to the next page for steps to track the progress of your deployment.</p>
 </li>
 </ol>
 </div>
+</li>
+</ul>
+</div>
 <nav class="pagination">
   <span class="prev"><a href="section6.2.html">Create the Data Plane VM</a></span>
-  <span class="next"><a href="section6.4.html">Create the Data Plane VM</a></span>
+  <span class="next"><a href="section6.4.html">Troubleshoot the Data Plane deployment</a></span>
 </nav>
 </article>
   </div>
