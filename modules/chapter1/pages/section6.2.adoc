@@ -1,5 +1,10 @@
 = Create the Data Plane VM
 
+In this lab we are going to use pre-provisioned compute node for deployment of dataplane. 
+
+Follow the steps on this page to create a pre-provisioned compute node for use with dataplane deployment.
+
+
 . Make sure you are accessing *hypervisor* host as *root* user. 
 +
 .Sample Output

@@ -26,7 +26,7 @@ vi osp-ng-dataplane-netconfig.yaml
 .. Change the dnsDomain as pre requirement.
 .. Change the allocation rages for the ctlplane network.
 .. Change the allocation ranges for external network.
-.. Remove the configuration block for theStorageMgmt network.
+.. Remove the configuration block for the StorageMgmt network.
 
 . Apply the *network confguration*:
 +

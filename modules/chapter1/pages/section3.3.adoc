@@ -1,5 +1,7 @@
 = Configuring Network Attachment Definition
 
+*Reference:* Step #7 on https://access.redhat.com/documentation/en-us/red_hat_openstack_platform/18.0-dev-preview/html-single/deploying_red_hat_openstack_platform_18.0_development_preview_3_on_red_hat_openshift_container_platform/index#proc_preparing-RHOCP-for-RHOSP-network-isolation_preparing[the same link on the previous page] for Section 3.4. Preparing RHOCP for RHOSP network isolation.
+
 . Copy sample configuration for the network-attachment-defination configuration from the same documentation url (step #8)
 +
 *or*

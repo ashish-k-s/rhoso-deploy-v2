@@ -2,6 +2,7 @@
 ** xref:section1.1.adoc[]
 ** xref:section1.2.adoc[]
 ** xref:section1.3.adoc[]
+** xref:section1.4.adoc[]
 * xref:section2.1.adoc[]
 ** xref:section2.2.adoc[]
 ** xref:section2.3.adoc[]
@@ -28,3 +29,4 @@
 ** xref:section6.4.adoc[]
 ** xref:section6.5.adoc[]
 * xref:section9.adoc[]
+* xref:section10.adoc[]

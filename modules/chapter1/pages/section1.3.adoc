@@ -4,10 +4,10 @@ In this specific training, the lab deployment can be executed in three distinct 
 
 == 1. The Hard Way (Recommended)
 - Obtain sample files from the product documentation and upstream repositories.
-- Files with `*.sample` extension are mde available in the repositor for your convenience.
-- Tweak Configuration: Customize the sample configuration to suit the lab environment.
+- The files with `*.sample` extension are mde available in the repositor for your convenience.
+- Customize the sample configuration to suit the lab environment.
 
-== 2. Easy Way (Use if You are Stuck)
+== 2. Easy Way (Use this if you are stuck)
 - Utilize pre-configured files that are already adjusted for the lab environment.
 - Files starting with name `osp-ng-*` are pre-configured files that are made available in the repository.
 - Deploy using these files to understand the deployment workflow.
@@ -17,4 +17,3 @@ In this specific training, the lab deployment can be executed in three distinct 
 - Ensure to run the scripts in the recommended sequence.
 - Execute the scripts on the recommended hosts.
 - Use this only if you need the setup qickly deployed for use with any other purpose.
-
