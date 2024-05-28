@@ -68,8 +68,6 @@ Checking host mapping for compute host 'edpm-compute-0.aio.example.com': ffc784c
 Creating host mapping for compute host 'edpm-compute-0.aio.example.com': ffc784cb-f1e2-4a9f-850f-c865214d3edd
 Found 1 unmapped computes in cell: e35f1b96-fc8d-4b4d-8d47-24f3a0d38bbc
 ----
-+
-FIXME: Explain significance of the above step
 
 . Create a VM
 +

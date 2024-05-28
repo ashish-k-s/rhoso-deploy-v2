@@ -3,7 +3,7 @@
 **Reference:**
 
 - https://access.redhat.com/documentation/en-us/red_hat_openstack_platform/18.0-dev-preview/html-single/deploying_red_hat_openstack_platform_18.0_development_preview_3_on_red_hat_openshift_container_platform/index#proc_creating-a-set-of-data-plane-nodes_dataplane[5.3. Creating a set of data plane nodes] from deployment guide.
-- https://github.com/openstack-k8s-operators/dataplane-operator/blob/238ed4f5b9f5e77c90d2785c825bde10f0b16ca0/config/samples/dataplane_v1beta1_openstackdataplanenodeset_with_ipam.yaml[Sample pre-provisioned nodes config] from upstream repository.
+- https://github.com/openstack-k8s-operators/dataplane-operator/blob/238ed4f5b9f5e77c90d2785c825bde10f0b16ca0/config/samples/dataplane_v1beta1_openstackdataplanenodeset_networker.yaml[Sample pre-provisioned nodes config] from upstream repository.
 - https://access.redhat.com/documentation/en-us/red_hat_openstack_platform/18.0-dev-preview/html-single/deploying_red_hat_openstack_platform_18.0_development_preview_3_on_red_hat_openshift_container_platform/index#proc_deploying-the-data-plane_dataplane[5.5. Deploying the data plane] from deployment guide.
 
 . Connect to the *bastion* server with password `redhat`
@@ -55,7 +55,6 @@ vi osp-ng-dataplane-node-set-deploy.yaml
 ----
 
 . You may need to perform following changes in the yaml file copied from sample:
-FIXME: see what all is really mandatory.
 .. Under `spec` section add environment variables for ansible output (optional)
 +
 ----
@@ -66,11 +65,11 @@ FIXME: see what all is really mandatory.
       value: "2"
 ----
 
-.. Add `download-cache` under `services` list. FIXME: required?
+.. Add `download-cache` under `services` list.
 
-.. Set `ansibleHost` varialbe to the ip address of compute node 
+.. Set `ansibleHost` varialbe to the ip address of compute node.
 
-.. Add `ansibleUser` variable and set it to `root`
+.. Add `ansibleUser` variable and set it to `root`.
 
 .. Under the `nodes` blok for `edpm-compute-0` node, make sure all network names are their settings are as per your network configuration table.
 
@@ -78,14 +77,14 @@ FIXME: see what all is really mandatory.
 
 .. Remove the block for `edpm-compute-1`, we are deploying single compute now.
 
-.. Under `nodeTemplate` change `ansibleUser` from cloud-admin to root.
+.. Under `nodeTemplate` change `ansibleUser` from cloud-admin to `root`.
 
 .. Set the appropriate name for your nova api networks, change the string from `internal_api` to `internalapi`.
 
 .. Under `edpm_network_config_template` jinja2 block:
 
-... Under `network_config` change `for network in role_networks` to `for network in role_networks if network != 'external'` FIXME: required?
-... Add below jinja2 block FIXME: explain the need and how it is derived.
+... Under `network_config` change `for network in role_networks` to `for network in role_networks if network != 'external'`
+... Add below jinja2 block 
 +
 ----
           {% if 'external' in role_networks or 'external_bridge' in role_tags %}
@@ -108,13 +107,14 @@ FIXME: see what all is really mandatory.
             - ip_netmask: {{ external_ip }}/{{ external_cidr }}
           {% endif %}
 ----
-... Set the variables for compute host networking, e.g dns, vlan, mtu, etc. (FIXME: elaborate this)
+... Set the variables for compute host networking, e.g dns, vlan, mtu, etc.
 ... Define `role_networks` used in jinja2 block.
 ... Set `edpm_sshd_allowed_ranges` to ctlplane subnet.
-... Set `edpm_container_registry_logins` with your credentials. FIXME: is it required if compute node is pre-registered?
+... Set `edpm_container_registry_logins` with your credentials. 
 
-FIXME: add this: Make sure nmae of the nodesets in deployment config matches with metadata name in your dataplane nodeset configuration.
+NOTE: Make sure nmae of the nodesets in deployment config matches with metadata name in your dataplane nodeset configuration.
 
+IMPORTANT: Configuration of data plane node set file is tricky. Compare your configuration settings with the pre-configured file for reference.
 
 . Copy sample dataplane deployment configuration from the documentation link mentioned in the reference on top.
 +

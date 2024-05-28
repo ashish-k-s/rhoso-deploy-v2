@@ -2,8 +2,6 @@
 
 Please refer to the following table for the network configuration utilized in this deployment:
 
-FIXME: review/change this table if required. also see if any google spreadsheet link can be provided for such configuration in the custom deployment.
-
 [cols="1,1,1,1,1,1,1"]
 |===
 |Network name | VLAN | CIDR	| NetConfig allocation | Range	MetalLB IPAddressPool range	| nad ipam range | OCP worker nncp range

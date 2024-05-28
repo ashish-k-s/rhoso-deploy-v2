@@ -44,5 +44,3 @@ internalapi   ["internalapi"]                             ["enp1s0.20"]
 storage       ["storage"]                                 ["enp1s0.21"]
 tenant        ["tenant"]                                  ["enp1s0.22"]
 ----
-
-FIXME: Any explanation about the significance of these?

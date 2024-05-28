@@ -26,7 +26,7 @@ vi osp-ng-ctlplane-deploy.yaml
 ----
 
 . Change the configuration as per your setup.
-.. Change `storageClass` from `local-storage` to `ocs-storagecluster-ceph-rbd` FIXME
+.. Change `storageClass` from `local-storage` to `ocs-storagecluster-ceph-rbd`
 .. Change the `metallb.universe.tf/loadBalancerIPs` to `172.22.0.89` (this sets external ip for dnsmasq service)
 .. Set the server ip from 192.168.122.1 to 192.168.123.100 (this reflects in /etc/dnsmasq.d/config.cfg file of dnsmasq-dns pod)
 .. Configure nfs cinder volume: Refer step #2 in https://access.redhat.com/documentation/en-us/red_hat_openstack_platform/18.0-dev-preview/html-single/deploying_red_hat_openstack_platform_18.0_development_preview_3_on_red_hat_openshift_container_platform/index#proc_alternative-cinder-configure-control-plane-for-nfs_ceph-back-end[9.1.2. Configuring the control plane to use the generic NFS driver]
