@@ -89,14 +89,3 @@ oc get openstackcontrolplane -n openstack
 NAME                                 STATUS   MESSAGE
 openstack-galera-network-isolation   True     Setup complete
 ----
-
-
-
-FIXME: short explanation  for disabling swift, designate, redis, barbican
-
-
-INFORMATION: Sample configuration files in the form of Validated Architectures (VAs) may be provided as Feature Pack after release of RHOSP18.
-These will be made available in the form of kustomize YAML files.
-Kustomize is a Kubernetes-native deployment tool that enables customization of YAML files without altering the original. 
-It simplifies resource configuration by allowing base templates to be customized with user data, eliminating the need to write manifests from scratch. 
-This abstraction streamlines resource management, enabling users to focus solely on relevant details without requiring full knowledge of Kubernetes YAML structures.

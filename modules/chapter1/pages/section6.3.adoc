@@ -68,7 +68,9 @@ FIXME: see what all is really mandatory.
 
 .. Add `download-cache` under `services` list. FIXME: required?
 
-.. Set `ansibleHost` varialbe to the ip address of compute node and `ansibleUser` variable to `root`
+.. Set `ansibleHost` varialbe to the ip address of compute node 
+
+.. Add `ansibleUser` variable and set it to `root`
 
 .. Under the `nodes` blok for `edpm-compute-0` node, make sure all network names are their settings are as per your network configuration table.
 
@@ -78,7 +80,7 @@ FIXME: see what all is really mandatory.
 
 .. Under `nodeTemplate` change `ansibleUser` from cloud-admin to root.
 
-.. Set the appropriate name for your api network, change the string from `internal_api` to `internalapi`.
+.. Set the appropriate name for your nova api networks, change the string from `internal_api` to `internalapi`.
 
 .. Under `edpm_network_config_template` jinja2 block:
 
@@ -111,25 +113,27 @@ FIXME: see what all is really mandatory.
 ... Set `edpm_sshd_allowed_ranges` to ctlplane subnet.
 ... Set `edpm_container_registry_logins` with your credentials. FIXME: is it required if compute node is pre-registered?
 
+FIXME: add this: Make sure nmae of the nodesets in deployment config matches with metadata name in your dataplane nodeset configuration.
+
 
 . Copy sample dataplane deployment configuration from the documentation link mentioned in the reference on top.
 +
 *or*
 +
-Use `dataplane-deploy.sample` file.
+Use `dataplane-deployment.sample` file.
 
 . Create a copy of sample configuration file.
 +
 [source,bash]
 ----
-cp dataplane-deploy.sample osp-ng-dataplane-deploy.yaml
+cp dataplane-deployment.sample osp-ng-dataplane-deployment.yaml
 ----
 
 . Edit the file with your preferred editor. 
 +
 [source,bash]
 ----
-vi osp-ng-dataplane-deploy.yaml
+vi osp-ng-dataplane-deployment.yaml
 ----
 
 . Make sure you appropriate `nodeSets` are listed.
@@ -144,4 +148,5 @@ oc apply -f osp-ng-dataplane-deployment.yaml
 ----
 +
 The data plane deployment takes several minutes to complete.
+
 . Go to the next page for steps to track the progress of your deployment.

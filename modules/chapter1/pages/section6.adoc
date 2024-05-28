@@ -1,1 +1,7 @@
 = Create data plane
+
+In this section we will deploy the data plane with a pre-provisioned compute node in our RHOSP cluster.
+
+We will use `OpenStackDataPlaneNodeSet` CRD to define the nodes and the layout of the data plane.
+We will trigger the deployment process with `OpenStackDataPlaneDeployment` custom resource.
+

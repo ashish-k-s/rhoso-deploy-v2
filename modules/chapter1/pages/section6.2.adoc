@@ -107,7 +107,7 @@ ssh root@172.22.0.100
 sudo hostnamectl set-hostname edpm-compute-0.aio.example.com
 ----
 
-. Subscribe to the RHEL 9.3 Repos with Validated Account
+. Subscribe the compute node to the RHEL9.3 repositories and RHOSP18 development preview channel on satellite. 
 +
 [source,bash,role=execute]
 ----
@@ -120,14 +120,22 @@ sudo subscription-manager repos --disable=*
 subscription-manager repos --enable=rhceph-6-tools-for-rhel-9-x86_64-rpms --enable=rhel-9-for-x86_64-baseos-rpms --enable=rhel-9-for-x86_64-appstream-rpms --enable=rhel-9-for-x86_64-highavailability-rpms --enable=openstack-dev-preview-for-rhel-9-x86_64-rpms --enable=fast-datapath-for-rhel-9-x86_64-rpms
 ----
 
-.. Install podman on the compute and login to registries
+. Install podman on the compute.
 +
 [source,bash,role=execute]
 ----
-sudo dnf install -y podman
+dnf install -y podman
 ----
 
-.. Log off the Compute Server
+podman login registry.redhat.io
+
+
+[root@edpm-compute-0 ~]# podman login registry.redhat.io
+Username: rhn-support-ashishks
+Password: 
+Login Succeeded!
+
+. Log off the Compute Server
 +
 [source,bash,role=execute]
 ----
@@ -145,11 +153,8 @@ virsh snapshot-create-as osp-compute0 preprovisioned
 +
 [source,bash,role=execute]
 ----
-scp /root/.ssh/id_rsa root@192.168.123.100:/root/.ssh/id_rsa_compute
-scp /root/.ssh/id_rsa.pub root@192.168.123.100:/root/.ssh/id_rsa_compute.pub
+scp -o StrictHostKeyChecking=accept-new /root/.ssh/id_rsa root@192.168.123.100:/root/.ssh/id_rsa_compute
+scp -o StrictHostKeyChecking=accept-new /root/.ssh/id_rsa.pub root@192.168.123.100:/root/.ssh/id_rsa_compute.pub
 ----
-
-WARNING: This might error initially because of unknown hosts file.
-Retry to make sure both files are copied.
 
 NOTE: We had copied the id_rsa.pub key form hypervisor to compute VM while creating the VM in earlier steps on this page.

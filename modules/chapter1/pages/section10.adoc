@@ -20,7 +20,7 @@ The deployment scripts provided here are ment to work only on this specific demo
 . Login to the bastion node as root and clone the `rhoso-deploy-files` repo if you have not already cloned it.
 +
 ----
-git clone git@github.com:RedHatQuickCourses/rhoso-deploy-files.git
+git clone https://github.com/RedHatQuickCourses/rhoso-deploy-files.git
 cd rhoso-deploy-files
 ----
 

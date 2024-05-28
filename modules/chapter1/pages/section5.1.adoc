@@ -60,6 +60,8 @@ cp ctlplane-secret.sample osp-ng-ctlplane-secret.yaml
 
 . Generate base64 password string for your desired password.
 +
+You may change the string `password` in the below command with your desired password.
++
 [source,bash]
 ----
 echo -n password | base64

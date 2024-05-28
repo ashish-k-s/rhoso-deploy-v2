@@ -102,7 +102,39 @@ oc delete -f osp-ng-dataplane-deployment.yaml
 oc delete -f osp-ng-dataplane-node-set-deploy.yaml
 ----
 
-. Re-run the deployment:
+. You may need to restore the compute node depending on where the deployment is failing.
++
+Run below command as `root` user from `hyperviosr`:
++
+[source,bash,role=execute]
+----
+virsh snapshot-revert --domain osp-compute0 preprovisioned 
+----
++
+.Sample output
+----
+[root@hypervisor ~]# virsh snapshot-revert --domain osp-compute0 preprovisioned 
+----
+
+. Wait for a few minutes and then make sure you are able to connect to the compute node from the hypervisor
++
+[source,bash,role=execute]
+----
+ssh root@172.22.0.100
+----
++
+.Sample output
+----
+[root@hypervisor ~]# ssh root@172.22.0.100
+Activate the web console with: systemctl enable --now cockpit.socket
+
+Register this system with Red Hat Insights: insights-client --register
+Create an account or view all your systems at https://red.ht/insights-dashboard
+Last login: Mon May 27 22:49:50 2024 from 172.22.0.254
+[root@edpm-compute-0 ~]# 
+----
+
+. Go back to the bastion VM as root user and re-run the deployment:
 +
 [source,bash,role=execute]
 ----

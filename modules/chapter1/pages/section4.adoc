@@ -1,1 +1,7 @@
-# Storage FIXME
+# Storage
+
+
+In this section, we will configure NFS storage shares for use with our OpenStack deployment. 
+Note that NFS storage is not the most efficient option for RHOSP deployment. 
+We will cover integration with Ceph storage later in this training series.
+

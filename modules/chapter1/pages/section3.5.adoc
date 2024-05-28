@@ -26,7 +26,7 @@ vi osp-ng-metallb-l2-advertisements.yaml
 +
 [source,bash,role=execute]
 ----
-oc apply -f osp-ng-metal-lb-l2-advertisements.yaml
+oc apply -f osp-ng-metallb-l2-advertisements.yaml
 ----
 
 . Verify the configuration:
