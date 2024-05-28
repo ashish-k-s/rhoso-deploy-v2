@@ -101,13 +101,13 @@
   </li>
   <li class="nav-item" data-depth="1">
     <button class="nav-item-toggle"></button>
-    <a class="nav-link" href="section4.html">Storage FIXME</a>
+    <a class="nav-link" href="section4.html">Storage</a>
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="section4.1.html">Configuring NFS storage</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="section4.2.html">storage</a>
+    <a class="nav-link" href="section4.2.html">Verify storage configuration</a>
   </li>
 </ul>
   </li>
@@ -262,7 +262,7 @@ In this deployment, the bastion has a preconfigured NFS service that we will be 
 <p>Change the <code>metallb.universe.tf/loadBalancerIPs</code> to <code>172.22.0.89</code> (this sets external ip for dnsmasq service)</p>
 </li>
 <li>
-<p>Set the server ip from 192.168.123.100 to 192.168.123.100 (this reflects in /etc/dnsmasq.d/config.cfg file of dnsmasq-dns pod)</p>
+<p>Set the server ip from 192.168.122.1 to 192.168.123.100 (this reflects in /etc/dnsmasq.d/config.cfg file of dnsmasq-dns pod)</p>
 </li>
 <li>
 <p>Configure nfs cinder volume: Refer step #2 in <a href="https://access.redhat.com/documentation/en-us/red_hat_openstack_platform/18.0-dev-preview/html-single/deploying_red_hat_openstack_platform_18.0_development_preview_3_on_red_hat_openshift_container_platform/index#proc_alternative-cinder-configure-control-plane-for-nfs_ceph-back-end">9.1.2. Configuring the control plane to use the generic NFS driver</a></p>
@@ -314,27 +314,8 @@ This can take several minutes.
 <pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">while ! (oc get openstackcontrolplane -n openstack -o custom-columns=Name:.metadata.name,Status:.status.conditions[0].message | grep 'Setup complete'); do oc get openstackcontrolplane -n openstack; sleep 30; done</code></pre>
 </div>
 </div>
-<div class="paragraph">
-<p>FIXME: short explanation  for disabling swift, designate, redis, barbican</p>
-</div>
 </li>
 </ol>
-</div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-Sample configuration files in the form of Validated Architectures (VAs) may be provided as Feature Pack after release of RHOSP18.
-These will be made available in the form of kustomize YAML files.
-Kustomize is a Kubernetes-native deployment tool that enables customization of YAML files without altering the original.
-It simplifies resource configuration by allowing base templates to be customized with user data, eliminating the need to write manifests from scratch.
-This abstraction streamlines resource management, enabling users to focus solely on relevant details without requiring full knowledge of Kubernetes YAML structures.
-</td>
-</tr>
-</table>
 </div>
 <nav class="pagination">
   <span class="prev"><a href="section5.2.html">Install the OpenStack Operator</a></span>

@@ -101,13 +101,13 @@
   </li>
   <li class="nav-item" data-depth="1">
     <button class="nav-item-toggle"></button>
-    <a class="nav-link" href="section4.html">Storage FIXME</a>
+    <a class="nav-link" href="section4.html">Storage</a>
 <ul class="nav-list">
   <li class="nav-item is-current-page" data-depth="2">
     <a class="nav-link" href="section4.1.html">Configuring NFS storage</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="section4.2.html">storage</a>
+    <a class="nav-link" href="section4.2.html">Verify storage configuration</a>
   </li>
 </ul>
   </li>
@@ -197,7 +197,7 @@
 <nav class="breadcrumbs" aria-label="breadcrumbs">
   <ul>
     <li><a href="../index.html">Placeholder Course Title</a></li>
-    <li><a href="section4.html">Storage FIXME</a></li>
+    <li><a href="section4.html">Storage</a></li>
     <li><a href="section4.1.html">Configuring NFS storage</a></li>
   </ul>
 </nav>
@@ -224,7 +224,7 @@ chmod 777 /nfs/cinder</code></pre>
 </div>
 </li>
 <li>
-<p>Configure NFS storage class</p>
+<p>Create directories for NFS persistent volumes.</p>
 <div class="listingblock execute">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">mkdir /nfs/pv6
@@ -236,14 +236,96 @@ mkdir /nfs/pv11
 chmod 777 /nfs/pv*</code></pre>
 </div>
 </div>
+</li>
+<li>
+<p>Configure NFS storage class</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>Use below sample configuration to create nfs sorage class:</p>
 <div class="listingblock execute">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc create -f nfs-storage.yaml</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+   name: nfs
+provisioner: kubernetes.io/no-provisioner
+reclaimPolicy: Delete</code></pre>
 </div>
 </div>
 </li>
 <li>
-<p>Prepare the secret to place the NFS server connection used by Cinder</p>
+<p>Use below sample configuration to create persistent volume of type NFS</p>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: nfs-pv1
+spec:
+  accessModes:
+  - ReadWriteOnce
+  - ReadWriteMany
+  capacity:
+    storage: 100Gi
+  nfs:
+    path: /nfs/pv1
+    server: 192.168.123.100
+  persistentVolumeReclaimPolicy: Delete
+  storageClassName: nfs
+  volumeMode: Filesystem</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Create copies of the above block for PersistentVolume.</p>
+</li>
+<li>
+<p>Use the simila block for creating different physicle volumes.</p>
+</li>
+<li>
+<p>Change the name and the path accordingly.</p>
+</li>
+<li>
+<p>You may add your configuration for creation of nfs StorageClass and PersistentVolumes in one file.</p>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">vi nfs-storage.yaml</code></pre>
+</div>
+</div>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>Apply the nfs storage configuration.</p>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc apply -f nfs-storage.yaml</code></pre>
+</div>
+</div>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>Reference: 9.1.1. Creating the NFS server connection secret</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Prepare the nfs cinder configuration file as below:</p>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">cat &gt;&gt; nfs-cinder-conf &lt;&lt; EOF
+[nfs]
+nas_host=192.168.123.100
+nas_share_path=/nfs/cinder
+EOF</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Prepare the secret to place the NFS server connection used by Cinder.</p>
 <div class="listingblock execute">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc create secret generic cinder-nfs-config --from-file=nfs-cinder-conf</code></pre>
@@ -251,7 +333,20 @@ chmod 777 /nfs/pv*</code></pre>
 </div>
 </li>
 <li>
-<p>Prepare the secret to place the server connection used by Glance</p>
+<p>Prepare the glance configuration file as below:</p>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">cat &gt;&gt; glance-conf &lt;&lt; EOF
+[default_backend]
+cinder_store_user_name = glance
+cinder_store_password = openstack
+cinder_store_project_name = service[root@ocp4-bastion demo-lab]#
+EOF</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Prepare the secret to place the server connection used by Glance.</p>
 <div class="listingblock execute">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc create secret generic glance-cinder-config --from-file=glance-conf</code></pre>
@@ -264,8 +359,8 @@ chmod 777 /nfs/pv*</code></pre>
 </ol>
 </div>
 <nav class="pagination">
-  <span class="prev"><a href="section4.html">Storage FIXME</a></span>
-  <span class="next"><a href="section4.2.html">storage</a></span>
+  <span class="prev"><a href="section4.html">Storage</a></span>
+  <span class="next"><a href="section4.2.html">Verify storage configuration</a></span>
 </nav>
 </article>
   </div>

@@ -101,13 +101,13 @@
   </li>
   <li class="nav-item" data-depth="1">
     <button class="nav-item-toggle"></button>
-    <a class="nav-link" href="section4.html">Storage FIXME</a>
+    <a class="nav-link" href="section4.html">Storage</a>
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="section4.1.html">Configuring NFS storage</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="section4.2.html">storage</a>
+    <a class="nav-link" href="section4.2.html">Verify storage configuration</a>
   </li>
 </ul>
   </li>
@@ -339,7 +339,7 @@ nmcli con up "static-eth1"</code></pre>
 </div>
 </li>
 <li>
-<p>Subscribe to the RHEL 9.3 Repos with Validated Account</p>
+<p>Subscribe the compute node to the RHEL9.3 repositories and RHOSP18 development preview channel on satellite.</p>
 <div class="listingblock execute">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">curl -ko /etc/pki/ca-trust/source/anchors/demosat-ha.infra.demo.redhat.com.ca.crt  "https://demosat-ha.infra.demo.redhat.com/pub/katello-server-ca.crt"
@@ -351,16 +351,28 @@ sudo subscription-manager repos --disable=*
 subscription-manager repos --enable=rhceph-6-tools-for-rhel-9-x86_64-rpms --enable=rhel-9-for-x86_64-baseos-rpms --enable=rhel-9-for-x86_64-appstream-rpms --enable=rhel-9-for-x86_64-highavailability-rpms --enable=openstack-dev-preview-for-rhel-9-x86_64-rpms --enable=fast-datapath-for-rhel-9-x86_64-rpms</code></pre>
 </div>
 </div>
-<div class="olist loweralpha">
-<ol class="loweralpha" type="a">
+</li>
 <li>
-<p>Install podman on the compute and login to registries</p>
+<p>Install podman on the compute.</p>
 <div class="listingblock execute">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">sudo dnf install -y podman</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">dnf install -y podman</code></pre>
 </div>
 </div>
 </li>
+</ol>
+</div>
+<div class="paragraph">
+<p>podman login registry.redhat.io</p>
+</div>
+<div class="paragraph">
+<p>[root@edpm-compute-0 ~]# podman login registry.redhat.io
+Username: rhn-support-ashishks
+Password:
+Login Succeeded!</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
 <li>
 <p>Log off the Compute Server</p>
 <div class="listingblock execute">
@@ -368,7 +380,8 @@ subscription-manager repos --enable=rhceph-6-tools-for-rhel-9-x86_64-rpms --enab
 <pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">logout</code></pre>
 </div>
 </div>
-</li>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
 <li>
 <p>Snapshot the Compute Server</p>
 <div class="listingblock execute">
@@ -384,25 +397,12 @@ subscription-manager repos --enable=rhceph-6-tools-for-rhel-9-x86_64-rpms --enab
 <p>Set SSH key for root user on the compute server.</p>
 <div class="listingblock execute">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">scp /root/.ssh/id_rsa root@192.168.123.100:/root/.ssh/id_rsa_compute
-scp /root/.ssh/id_rsa.pub root@192.168.123.100:/root/.ssh/id_rsa_compute.pub</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">scp -o StrictHostKeyChecking=accept-new /root/.ssh/id_rsa root@192.168.123.100:/root/.ssh/id_rsa_compute
+scp -o StrictHostKeyChecking=accept-new /root/.ssh/id_rsa.pub root@192.168.123.100:/root/.ssh/id_rsa_compute.pub</code></pre>
 </div>
 </div>
 </li>
 </ol>
-</div>
-<div class="admonitionblock warning">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-warning" title="Warning"></i>
-</td>
-<td class="content">
-This might error initially because of unknown hosts file.
-Retry to make sure both files are copied.
-</td>
-</tr>
-</table>
 </div>
 <div class="admonitionblock note">
 <table>

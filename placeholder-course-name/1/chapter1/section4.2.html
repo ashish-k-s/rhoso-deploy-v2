@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>storage :: Placeholder Course Title</title>
+    <title>Verify storage configuration :: Placeholder Course Title</title>
     <link rel="prev" href="section4.1.html">
     <link rel="next" href="section5.html">
     <meta name="generator" content="Antora 3.1.3">
@@ -101,13 +101,13 @@
   </li>
   <li class="nav-item" data-depth="1">
     <button class="nav-item-toggle"></button>
-    <a class="nav-link" href="section4.html">Storage FIXME</a>
+    <a class="nav-link" href="section4.html">Storage</a>
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="section4.1.html">Configuring NFS storage</a>
   </li>
   <li class="nav-item is-current-page" data-depth="2">
-    <a class="nav-link" href="section4.2.html">storage</a>
+    <a class="nav-link" href="section4.2.html">Verify storage configuration</a>
   </li>
 </ul>
   </li>
@@ -197,8 +197,8 @@
 <nav class="breadcrumbs" aria-label="breadcrumbs">
   <ul>
     <li><a href="../index.html">Placeholder Course Title</a></li>
-    <li><a href="section4.html">Storage FIXME</a></li>
-    <li><a href="section4.2.html">storage</a></li>
+    <li><a href="section4.html">Storage</a></li>
+    <li><a href="section4.2.html">Verify storage configuration</a></li>
   </ul>
 </nav>
 </div>
@@ -207,8 +207,63 @@
   <div class="toc-menu"></div>
 </aside>
 <article class="doc">
-<h1 class="page">storage</h1>
-
+<h1 class="page">Verify storage configuration</h1>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Verify storage class for <code>nfs</code> is available:</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash"> oc get storageclass | grep nfs</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Sample output</div>
+<div class="content">
+<pre> nfs                                     kubernetes.io/no-provisioner            Delete          Immediate              false                  36m</pre>
+</div>
+</div>
+</li>
+<li>
+<p>Check the NFS Physical Volumes:</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash"> oc get pv | grep nfs</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Sample output</div>
+<div class="content">
+<pre>nfs-pv1                                    100Gi      RWO,RWX        Delete           Available                                                        nfs                                    36m
+nfs-pv10                                   100Gi      RWO,RWX        Delete           Available                                                        nfs                                    36m
+nfs-pv2                                    100Gi      RWO,RWX        Delete           Available                                                        nfs                                    36m
+nfs-pv3                                    100Gi      RWO,RWX        Delete           Available                                                        nfs                                    36m
+nfs-pv4                                    100Gi      RWO,RWX        Delete           Available                                                        nfs                                    36m
+nfs-pv5                                    100Gi      RWO,RWX        Delete           Available                                                        nfs                                    36m
+nfs-pv6                                    100Gi      RWO,RWX        Delete           Available                                                        nfs                                    36m
+nfs-pv7                                    100Gi      RWO,RWX        Delete           Available                                                        nfs                                    36m
+nfs-pv8                                    100Gi      RWO,RWX        Delete           Available                                                        nfs                                    36m
+nfs-pv9                                    100Gi      RWO,RWX        Delete           Available                                                        nfs                                    36m</pre>
+</div>
+</div>
+</li>
+<li>
+<p>List the secrets created for storage:</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc get secrets | grep cinder</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Sample output</div>
+<div class="content">
+<pre>cinder-nfs-config                                    Opaque                                1      37m
+glance-cinder-config                                 Opaque                                1      37m</pre>
+</div>
+</div>
+</li>
+</ol>
+</div>
 <nav class="pagination">
   <span class="prev"><a href="section4.1.html">Configuring NFS storage</a></span>
   <span class="next"><a href="section5.html">Install control plane</a></span>

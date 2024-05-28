@@ -101,13 +101,13 @@
   </li>
   <li class="nav-item" data-depth="1">
     <button class="nav-item-toggle"></button>
-    <a class="nav-link" href="section4.html">Storage FIXME</a>
+    <a class="nav-link" href="section4.html">Storage</a>
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="section4.1.html">Configuring NFS storage</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="section4.2.html">storage</a>
+    <a class="nav-link" href="section4.2.html">Verify storage configuration</a>
   </li>
 </ul>
   </li>
@@ -301,7 +301,10 @@ FIXME: see what all is really mandatory.</p>
 <p>Add <code>download-cache</code> under <code>services</code> list. FIXME: required?</p>
 </li>
 <li>
-<p>Set <code>ansibleHost</code> varialbe to the ip address of compute node and <code>ansibleUser</code> variable to <code>root</code></p>
+<p>Set <code>ansibleHost</code> varialbe to the ip address of compute node</p>
+</li>
+<li>
+<p>Add <code>ansibleUser</code> variable and set it to <code>root</code></p>
 </li>
 <li>
 <p>Under the <code>nodes</code> blok for <code>edpm-compute-0</code> node, make sure all network names are their settings are as per your network configuration table.</p>
@@ -316,7 +319,7 @@ FIXME: see what all is really mandatory.</p>
 <p>Under <code>nodeTemplate</code> change <code>ansibleUser</code> from cloud-admin to root.</p>
 </li>
 <li>
-<p>Set the appropriate name for your api network, change the string from <code>internal_api</code> to <code>internalapi</code>.</p>
+<p>Set the appropriate name for your nova api networks, change the string from <code>internal_api</code> to <code>internalapi</code>.</p>
 </li>
 <li>
 <p>Under <code>edpm_network_config_template</code> jinja2 block:</p>
@@ -369,20 +372,30 @@ FIXME: see what all is really mandatory.</p>
 </ol>
 </div>
 </li>
+</ol>
+</div>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>FIXME: add this: Make sure nmae of the nodesets in deployment config matches with metadata name in your dataplane nodeset configuration.</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
 <li>
 <p>Copy sample dataplane deployment configuration from the documentation link mentioned in the reference on top.</p>
 <div class="paragraph">
 <p><strong>or</strong></p>
 </div>
 <div class="paragraph">
-<p>Use <code>dataplane-deploy.sample</code> file.</p>
+<p>Use <code>dataplane-deployment.sample</code> file.</p>
 </div>
 </li>
 <li>
 <p>Create a copy of sample configuration file.</p>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">cp dataplane-deploy.sample osp-ng-dataplane-deploy.yaml</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">cp dataplane-deployment.sample osp-ng-dataplane-deployment.yaml</code></pre>
 </div>
 </div>
 </li>
@@ -390,7 +403,7 @@ FIXME: see what all is really mandatory.</p>
 <p>Edit the file with your preferred editor.</p>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">vi osp-ng-dataplane-deploy.yaml</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">vi osp-ng-dataplane-deployment.yaml</code></pre>
 </div>
 </div>
 </li>
@@ -416,9 +429,6 @@ oc apply -f osp-ng-dataplane-deployment.yaml</code></pre>
 <p>Go to the next page for steps to track the progress of your deployment.</p>
 </li>
 </ol>
-</div>
-</li>
-</ul>
 </div>
 <nav class="pagination">
   <span class="prev"><a href="section6.2.html">Create the Data Plane VM</a></span>

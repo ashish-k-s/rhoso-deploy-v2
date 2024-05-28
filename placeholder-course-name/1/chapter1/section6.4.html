@@ -101,13 +101,13 @@
   </li>
   <li class="nav-item" data-depth="1">
     <button class="nav-item-toggle"></button>
-    <a class="nav-link" href="section4.html">Storage FIXME</a>
+    <a class="nav-link" href="section4.html">Storage</a>
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="section4.1.html">Configuring NFS storage</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="section4.2.html">storage</a>
+    <a class="nav-link" href="section4.2.html">Verify storage configuration</a>
   </li>
 </ul>
   </li>
@@ -359,7 +359,44 @@ oc delete -f osp-ng-dataplane-node-set-deploy.yaml</code></pre>
 </div>
 </li>
 <li>
-<p>Re-run the deployment:</p>
+<p>You may need to restore the compute node depending on where the deployment is failing.</p>
+<div class="paragraph">
+<p>Run below command as <code>root</code> user from <code>hyperviosr</code>:</p>
+</div>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">virsh snapshot-revert --domain osp-compute0 preprovisioned</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Sample output</div>
+<div class="content">
+<pre>[root@hypervisor ~]# virsh snapshot-revert --domain osp-compute0 preprovisioned</pre>
+</div>
+</div>
+</li>
+<li>
+<p>Wait for a few minutes and then make sure you are able to connect to the compute node from the hypervisor</p>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">ssh root@172.22.0.100</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Sample output</div>
+<div class="content">
+<pre>[root@hypervisor ~]# ssh root@172.22.0.100
+Activate the web console with: systemctl enable --now cockpit.socket
+
+Register this system with Red Hat Insights: insights-client --register
+Create an account or view all your systems at https://red.ht/insights-dashboard
+Last login: Mon May 27 22:49:50 2024 from 172.22.0.254
+[root@edpm-compute-0 ~]#</pre>
+</div>
+</div>
+</li>
+<li>
+<p>Go back to the bastion VM as root user and re-run the deployment:</p>
 <div class="listingblock execute">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc apply -f osp-ng-dataplane-node-set-deploy.yaml

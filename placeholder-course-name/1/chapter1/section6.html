@@ -101,13 +101,13 @@
   </li>
   <li class="nav-item" data-depth="1">
     <button class="nav-item-toggle"></button>
-    <a class="nav-link" href="section4.html">Storage FIXME</a>
+    <a class="nav-link" href="section4.html">Storage</a>
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="section4.1.html">Configuring NFS storage</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="section4.2.html">storage</a>
+    <a class="nav-link" href="section4.2.html">Verify storage configuration</a>
   </li>
 </ul>
   </li>
@@ -207,7 +207,13 @@
 </aside>
 <article class="doc">
 <h1 class="page">Create data plane</h1>
-
+<div class="paragraph">
+<p>In this section we will deploy the data plane with a pre-provisioned compute node in our RHOSP cluster.</p>
+</div>
+<div class="paragraph">
+<p>We will use <code>OpenStackDataPlaneNodeSet</code> CRD to define the nodes and the layout of the data plane.
+We will trigger the deployment process with <code>OpenStackDataPlaneDeployment</code> custom resource.</p>
+</div>
 <nav class="pagination">
   <span class="prev"><a href="section5.5.html">Verify OpenStack control plane configuration</a></span>
   <span class="next"><a href="section6.1.html">Create the Data Plane Network configuration</a></span>
