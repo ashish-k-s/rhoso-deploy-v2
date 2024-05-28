@@ -217,7 +217,7 @@
 <p><a href="https://access.redhat.com/documentation/en-us/red_hat_openstack_platform/18.0-dev-preview/html-single/deploying_red_hat_openstack_platform_18.0_development_preview_3_on_red_hat_openshift_container_platform/index#proc_creating-a-set-of-data-plane-nodes_dataplane">5.3. Creating a set of data plane nodes</a> from deployment guide.</p>
 </li>
 <li>
-<p><a href="https://github.com/openstack-k8s-operators/dataplane-operator/blob/238ed4f5b9f5e77c90d2785c825bde10f0b16ca0/config/samples/dataplane_v1beta1_openstackdataplanenodeset_with_ipam.yaml">Sample pre-provisioned nodes config</a> from upstream repository.</p>
+<p><a href="https://github.com/openstack-k8s-operators/dataplane-operator/blob/238ed4f5b9f5e77c90d2785c825bde10f0b16ca0/config/samples/dataplane_v1beta1_openstackdataplanenodeset_networker.yaml">Sample pre-provisioned nodes config</a> from upstream repository.</p>
 </li>
 <li>
 <p><a href="https://access.redhat.com/documentation/en-us/red_hat_openstack_platform/18.0-dev-preview/html-single/deploying_red_hat_openstack_platform_18.0_development_preview_3_on_red_hat_openshift_container_platform/index#proc_deploying-the-data-plane_dataplane">5.5. Deploying the data plane</a> from deployment guide.</p>
@@ -281,8 +281,7 @@ oc create secret generic nova-migration-ssh-key --from-file=ssh-privatekey=id --
 </div>
 </li>
 <li>
-<p>You may need to perform following changes in the yaml file copied from sample:
-FIXME: see what all is really mandatory.</p>
+<p>You may need to perform following changes in the yaml file copied from sample:</p>
 <div class="olist loweralpha">
 <ol class="loweralpha" type="a">
 <li>
@@ -298,13 +297,13 @@ FIXME: see what all is really mandatory.</p>
 </div>
 </li>
 <li>
-<p>Add <code>download-cache</code> under <code>services</code> list. FIXME: required?</p>
+<p>Add <code>download-cache</code> under <code>services</code> list.</p>
 </li>
 <li>
-<p>Set <code>ansibleHost</code> varialbe to the ip address of compute node</p>
+<p>Set <code>ansibleHost</code> varialbe to the ip address of compute node.</p>
 </li>
 <li>
-<p>Add <code>ansibleUser</code> variable and set it to <code>root</code></p>
+<p>Add <code>ansibleUser</code> variable and set it to <code>root</code>.</p>
 </li>
 <li>
 <p>Under the <code>nodes</code> blok for <code>edpm-compute-0</code> node, make sure all network names are their settings are as per your network configuration table.</p>
@@ -316,7 +315,7 @@ FIXME: see what all is really mandatory.</p>
 <p>Remove the block for <code>edpm-compute-1</code>, we are deploying single compute now.</p>
 </li>
 <li>
-<p>Under <code>nodeTemplate</code> change <code>ansibleUser</code> from cloud-admin to root.</p>
+<p>Under <code>nodeTemplate</code> change <code>ansibleUser</code> from cloud-admin to <code>root</code>.</p>
 </li>
 <li>
 <p>Set the appropriate name for your nova api networks, change the string from <code>internal_api</code> to <code>internalapi</code>.</p>
@@ -326,10 +325,10 @@ FIXME: see what all is really mandatory.</p>
 <div class="olist lowerroman">
 <ol class="lowerroman" type="i">
 <li>
-<p>Under <code>network_config</code> change <code>for network in role_networks</code> to <code>for network in role_networks if network != 'external'</code> FIXME: required?</p>
+<p>Under <code>network_config</code> change <code>for network in role_networks</code> to <code>for network in role_networks if network != 'external'</code></p>
 </li>
 <li>
-<p>Add below jinja2 block FIXME: explain the need and how it is derived.</p>
+<p>Add below jinja2 block</p>
 <div class="listingblock">
 <div class="content">
 <pre>          {% if 'external' in role_networks or 'external_bridge' in role_tags %}
@@ -355,7 +354,7 @@ FIXME: see what all is really mandatory.</p>
 </div>
 </li>
 <li>
-<p>Set the variables for compute host networking, e.g dns, vlan, mtu, etc. (FIXME: elaborate this)</p>
+<p>Set the variables for compute host networking, e.g dns, vlan, mtu, etc.</p>
 </li>
 <li>
 <p>Define <code>role_networks</code> used in jinja2 block.</p>
@@ -364,7 +363,7 @@ FIXME: see what all is really mandatory.</p>
 <p>Set <code>edpm_sshd_allowed_ranges</code> to ctlplane subnet.</p>
 </li>
 <li>
-<p>Set <code>edpm_container_registry_logins</code> with your credentials. FIXME: is it required if compute node is pre-registered?</p>
+<p>Set <code>edpm_container_registry_logins</code> with your credentials.</p>
 </li>
 </ol>
 </div>
@@ -377,8 +376,29 @@ FIXME: see what all is really mandatory.</p>
 </li>
 </ul>
 </div>
-<div class="paragraph">
-<p>FIXME: add this: Make sure nmae of the nodesets in deployment config matches with metadata name in your dataplane nodeset configuration.</p>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+Make sure nmae of the nodesets in deployment config matches with metadata name in your dataplane nodeset configuration.
+</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+Configuration of data plane node set file is tricky. Compare your configuration settings with the pre-configured file for reference.
+</td>
+</tr>
+</table>
 </div>
 <div class="olist arabic">
 <ol class="arabic">
