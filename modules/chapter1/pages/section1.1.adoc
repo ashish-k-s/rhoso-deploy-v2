@@ -1,6 +1,6 @@
 = Traditional TripleO deployment verses deployment with OpenShift cluster.
 
-== Introduction
+== Intro
 
 === Traditional RHOSP deployment with TripleO
 
